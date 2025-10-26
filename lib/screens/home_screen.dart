@@ -102,22 +102,18 @@ class _FoodHome extends StatefulWidget {
 }
 
 class _FoodHomeState extends State<_FoodHome> {
-  final PageController _offerController = PageController(viewportFraction: 0.95);
-  int _offerIndex = 0;
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void dispose() {
-    _offerController.dispose();
+    _locationController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final offers = [
-      {'title': 'Get 50% Off!', 'subtitle': 'On your first order'},
-      {'title': 'Free Delivery', 'subtitle': 'Available today only'},
-      {'title': 'New Restaurants', 'subtitle': 'Discover near you'}
-    ];
     final isWeb = MediaQuery.of(context).size.width > 600;
     final screenWidth = MediaQuery.of(context).size.width;
     final contentWidth = isWeb ? 900.0 : screenWidth;
@@ -128,141 +124,150 @@ class _FoodHomeState extends State<_FoodHome> {
           width: contentWidth,
           child: CustomScrollView(
             slivers: [
-              // Top header with professional styling
+              // Hero Section with Green Gradient
               SliverToBoxAdapter(
                 child: Container(
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color.fromARGB(255, 240, 240, 244), Color.fromARGB(255, 237, 238, 239)],
+                      colors: [Color(0xFF27A600), Color(0xFF34D058)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 32),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Welcome to Bock Foods',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 95, 83, 202),
-                            height: 1.2,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Food, groceries, and essentials delivered to your door',
-                          style: TextStyle(
-                            color: const Color.fromARGB(255, 152, 112, 203).withOpacity(0.9),
-                            fontSize: 16,
-                            height: 1.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              // Offers carousel with improved design
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 24, bottom: 16),
-                  child: Column(
+                  child: Stack(
                     children: [
-                      SizedBox(
-                        height: 160,
-                        child: PageView.builder(
-                          controller: _offerController,
-                          itemCount: offers.length,
-                          onPageChanged: (i) => setState(() => _offerIndex = i),
-                          itemBuilder: (ctx, i) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    const Color(0xFF667EEA),
-                                    const Color(0xFF764BA2),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFF667EEA).withOpacity(0.3),
-                                    blurRadius: 20,
-                                    offset: const Offset(0, 10),
-                                  )
-                                ],
-                              ),
-                              padding: const EdgeInsets.all(24),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          offers[i]['title']!,
-                                          style: const TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          offers[i]['subtitle']!,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.white.withOpacity(0.9),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 70,
-                                    height: 70,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.local_offer,
-                                      size: 35,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                      // Decorative vegetables on left
+                      Positioned(
+                        left: -50,
+                        top: 20,
+                        child: Opacity(
+                          opacity: 0.3,
+                          child: Icon(
+                            Icons.emoji_food_beverage,
+                            size: 150,
+                            color: Colors.white,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(
-                          offers.length,
-                          (i) => AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: _offerIndex == i ? 28 : 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: _offerIndex == i
-                                  ? const Color(0xFF667EEA)
-                                  : Colors.grey[300],
-                              borderRadius: BorderRadius.circular(4),
-                            ),
+                      // Decorative food on right
+                      Positioned(
+                        right: -30,
+                        top: 40,
+                        child: Opacity(
+                          opacity: 0.3,
+                          child: Icon(
+                            Icons.restaurant,
+                            size: 120,
+                            color: Colors.white,
                           ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 20),
+                            // Main Heading
+                            const Text(
+                              'Order food & groceries. Discover',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                height: 1.2,
+                              ),
+                            ),
+                            const Text(
+                              'best restaurants. Swiggy it!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                height: 1.2,
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            
+                            // Search Bars
+                            Row(
+                              children: [
+                                // Location Input
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.location_on, color: Color(0xFFFF6B35), size: 24),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: TextField(
+                                            controller: _locationController,
+                                            decoration: const InputDecoration(
+                                              hintText: 'Enter your delivery location',
+                                              hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                                              border: InputBorder.none,
+                                            ),
+                                          ),
+                                        ),
+                                        const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                
+                                // Search Input
+                                Expanded(
+                                  flex: 3,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextField(
+                                            controller: _searchController,
+                                            decoration: const InputDecoration(
+                                              hintText: 'Search for restaurant, item or more',
+                                              hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                                              border: InputBorder.none,
+                                            ),
+                                          ),
+                                        ),
+                                        const Icon(Icons.search, color: Colors.grey),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 40),
+                          ],
                         ),
                       ),
                     ],
@@ -273,74 +278,62 @@ class _FoodHomeState extends State<_FoodHome> {
               // Service Cards Section
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  padding: const EdgeInsets.all(24.0),
+                  child: Row(
                     children: [
-                      const Text(
-                        'Our Services',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2D3142),
+                      Expanded(
+                        child: _ServiceCard(
+                          title: 'FOOD DELIVERY',
+                          subtitle: 'FROM RESTAURANTS',
+                          offer: 'UPTO 60% OFF',
+                          icon: Icons.restaurant,
+                          color: const Color(0xFFFF6B35),
+                          imagePath: 'food_delivery',
+                          onTap: () {
+                            final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+                            homeState?.setState(() {
+                              homeState._selectedIndex = 1;
+                            });
+                          },
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Choose from our premium delivery services',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _ServiceCard(
+                          title: 'INSTAMART',
+                          subtitle: 'INSTANT GROCERY',
+                          offer: 'UPTO 60% OFF',
+                          icon: Icons.shopping_basket,
+                          color: const Color(0xFF27A600),
+                          imagePath: 'instamart',
+                          onTap: () {
+                            final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+                            homeState?.setState(() {
+                              homeState._selectedIndex = 2;
+                            });
+                          },
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _CategoryTile(
-                              title: 'Food Delivery',
-                              subtitle: 'Order from top restaurants',
-                              icon: Icons.restaurant_menu,
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFFFF6B6B), Color(0xFFFF8E8E)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              onTap: () {
-                                final homeState = context.findAncestorStateOfType<_HomeScreenState>();
-                                homeState?.setState(() {
-                                  homeState._selectedIndex = 1;
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _CategoryTile(
-                              title: 'Instamart',
-                              subtitle: 'Groceries in minutes',
-                              icon: Icons.shopping_basket,
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF4ECDC4), Color(0xFF44A89F)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              onTap: () {
-                                final homeState = context.findAncestorStateOfType<_HomeScreenState>();
-                                homeState?.setState(() {
-                                  homeState._selectedIndex = 2;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _ServiceCard(
+                          title: 'GENIE',
+                          subtitle: 'PICK & DROP',
+                          offer: 'UPTO 50% OFF',
+                          icon: Icons.two_wheeler,
+                          color: const Color(0xFF5B67CA),
+                          imagePath: 'genie',
+                          onTap: () {
+                            // Navigate to genie service
+                          },
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
 
-              // Live it up section from screenshot
+              // Live it up section
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -410,19 +403,23 @@ class _FoodHomeState extends State<_FoodHome> {
   }
 }
 
-// Enhanced category tile with gradient
-class _CategoryTile extends StatelessWidget {
+// Service Card Widget
+class _ServiceCard extends StatelessWidget {
   final String title;
   final String subtitle;
+  final String offer;
   final IconData icon;
-  final Gradient gradient;
+  final Color color;
+  final String imagePath;
   final VoidCallback onTap;
 
-  const _CategoryTile({
+  const _ServiceCard({
     required this.title,
     required this.subtitle,
+    required this.offer,
     required this.icon,
-    required this.gradient,
+    required this.color,
+    required this.imagePath,
     required this.onTap,
   });
 
@@ -431,67 +428,95 @@ class _CategoryTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 200,
+        height: 340,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              flex: 3,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: gradient,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2D3142),
+                    ),
                   ),
-                ),
-                child: Center(
-                  child: Icon(
-                    icon,
-                    color: Colors.white,
-                    size: 56,
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  Text(
+                    offer,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Color(0xFF2D3142),
+              child: Stack(
+                children: [
+                  // Image placeholder with icon
+                  Positioned(
+                    right: 20,
+                    bottom: 20,
+                    child: Container(
+                      width: 140,
+                      height: 140,
+                      decoration: BoxDecoration(
+                        color: color.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        icon,
+                        size: 80,
+                        color: color.withOpacity(0.3),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 12,
+                  ),
+                  // Arrow button
+                  Positioned(
+                    left: 20,
+                    bottom: 20,
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      child: const Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],

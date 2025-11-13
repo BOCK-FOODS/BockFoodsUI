@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/food_item.dart';
 import 'package:provider/provider.dart';
-import '../providers/cart_provider.dart';
+import 'package:bock_foods/providers/cart_provider.dart';
 
 class FoodCard extends StatelessWidget {
   final FoodItem item;
@@ -52,8 +52,7 @@ class FoodCard extends StatelessWidget {
                       ),
                       onPressed: (){
                         Provider.of<FoodCartProvider>(context, listen: false).addItem(item);
-                        final snack = SnackBar(content: Text('${item.name} added to cart'));
-                        ScaffoldMessenger.of(context).showSnackBar(snack);
+                        // No snackbar per UX — unified cart reflects the change
                       },
                       child: const Text('ADD'),
                     ),

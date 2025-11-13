@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'restaurant_detail_final.dart';
-import '../models/sample_data.dart';
+// Add-to-cart removed from this screen; cart is managed in CartScreen via FoodCartProvider
 
 class RestaurantsScreen extends StatefulWidget {
   static const routeName = '/restaurants';
@@ -13,8 +13,8 @@ class RestaurantsScreen extends StatefulWidget {
 class _RestaurantsScreenState extends State<RestaurantsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _deliveryAddress = 'B- Block, flat No. 305, Malibu Rising City Apartment, Krish...';
-  String _selectedCategory = '';
-  List<Map<String, dynamic>> _cartItems = [];
+  // _selectedCategory removed (unused)
+  // Local cart items removed — adding to cart is disabled on this screen per UX
 
   @override
   void dispose() {
@@ -59,24 +59,7 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
       ),
     );
   }
-
-  void _addToCart(Map<String, dynamic> item) {
-    setState(() {
-      final existingIndex = _cartItems.indexWhere((cartItem) => cartItem['name'] == item['name']);
-      if (existingIndex >= 0) {
-        _cartItems[existingIndex]['quantity'] = (_cartItems[existingIndex]['quantity'] ?? 1) + 1;
-      } else {
-        _cartItems.add({...item, 'quantity': 1});
-      }
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${item['name']} added to cart'),
-        duration: const Duration(seconds: 1),
-        backgroundColor: const Color(0xFF4CAF50),
-      ),
-    );
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -560,95 +543,12 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
           ),
         ),
       ),
-      floatingActionButton: _cartItems.isNotEmpty
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                _showCartDialog();
-              },
-              backgroundColor: const Color(0xFF4CAF50),
-              icon: const Icon(Icons.shopping_cart, color: Colors.white),
-              label: Text(
-                '${_cartItems.fold(0, (sum, item) => sum + (item['quantity'] as int))} items',
-                style: const TextStyle(color: Colors.white),
-              ),
-            )
-          : null,
+      // Floating cart action removed on Restaurants screen per UX: cart interaction is via CartScreen
+      floatingActionButton: null,
     );
   }
 
-  void _showCartDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Your Cart'),
-        content: SizedBox(
-          width: 300,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ..._cartItems.map((item) => ListTile(
-                title: Text(item['name']),
-                subtitle: Text('${item['price']} x ${item['quantity']}'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.remove_circle_outline),
-                      onPressed: () {
-                        setState(() {
-                          if (item['quantity'] > 1) {
-                            item['quantity']--;
-                          } else {
-                            _cartItems.remove(item);
-                          }
-                        });
-                        Navigator.of(ctx).pop();
-                        if (_cartItems.isNotEmpty) {
-                          _showCartDialog();
-                        }
-                      },
-                    ),
-                    Text('${item['quantity']}'),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle_outline),
-                      onPressed: () {
-                        setState(() {
-                          item['quantity']++;
-                        });
-                        Navigator.of(ctx).pop();
-                        _showCartDialog();
-                      },
-                    ),
-                  ],
-                ),
-              )),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Close'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Proceeding to checkout...'),
-                  backgroundColor: Color(0xFF4CAF50),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
-            child: const Text('Checkout', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
+  // _showCartDialog removed — Restaurants screen doesn't manage cart directly
 
   Widget _buildCategoryIcon(String label, IconData icon, Color color) {
     return Container(
@@ -785,21 +685,7 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 8,
-                right: 8,
-                child: GestureDetector(
-                  onTap: () => _addToCart(item),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4CAF50),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(Icons.add, size: 20, color: Colors.white),
-                  ),
-                ),
-              ),
+              // add button removed from bestseller cards per request
             ],
           ),
           Padding(
@@ -884,21 +770,7 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                   child: Icon(Icons.restaurant, size: 50, color: Colors.grey),
                 ),
               ),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: GestureDetector(
-                  onTap: () => _addToCart(item),
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4CAF50),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Icon(Icons.add, size: 16, color: Colors.white),
-                  ),
-                ),
-              ),
+              // add button removed from budget meal cards per request
             ],
           ),
           Padding(
@@ -1078,18 +950,7 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 12,
-                  right: 12,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.favorite_border, size: 20, color: Colors.grey),
-                  ),
-                ),
+                // favorite heart removed from restaurant card per request
                 Positioned(
                   top: 12,
                   left: 12,

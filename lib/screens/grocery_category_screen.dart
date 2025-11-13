@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
+import '../models/food_item.dart';
 
 class GroceryCategoryScreen extends StatefulWidget {
   static const routeName = '/grocery-category';
@@ -19,7 +22,7 @@ class GroceryCategoryScreen extends StatefulWidget {
 }
 
 class _GroceryCategoryScreenState extends State<GroceryCategoryScreen> {
-  Map<String, int> cartItems = {};
+  Map<String, int> _localCartCount = {};  // Only for UI count display
   
   // Sample data for different categories
   Map<String, List<Map<String, dynamic>>> getCategoryItems() {
@@ -49,7 +52,7 @@ class _GroceryCategoryScreenState extends State<GroceryCategoryScreen> {
         {'name': 'Mother Dairy Milk', 'price': '60', 'unit': '1L', 'image': Icons.egg},
         {'name': 'Britannia Bread', 'price': '35', 'unit': '400g', 'image': Icons.egg},
         {'name': 'Amul Cheese Slices', 'price': '140', 'unit': '200g', 'image': Icons.egg},
-        {'name': 'Farm Fresh Eggs', 'price': '75', 'unit': '12 pieces', 'image': Icons.egg},
+        {'name': 'Farm Fresh milk', 'price': '75', 'unit': '12 pieces', 'image': Icons.egg},
         {'name': 'Nestle Dahi', 'price': '30', 'unit': '400g', 'image': Icons.egg},
         {'name': 'Amul Paneer', 'price': '95', 'unit': '200g', 'image': Icons.egg},
         {'name': 'Mother Dairy Curd', 'price': '28', 'unit': '400g', 'image': Icons.egg},
@@ -148,24 +151,44 @@ class _GroceryCategoryScreenState extends State<GroceryCategoryScreen> {
   }
 
   void addToCart(String itemName) {
+    final itemData = getCategoryItems()[widget.categoryName]!
+        .firstWhere((item) => item['name'] == itemName);
+    
+    final item = FoodItem(
+      id: itemName.toLowerCase().replaceAll(' ', '_'),
+      name: itemName,
+      price: double.parse(itemData['price']),
+      description: itemData['unit'],
+      category: widget.categoryName,
+      imageUrl: '',  // No images in the sample data
+      isVeg: true,
+    );
+
     setState(() {
-      cartItems[itemName] = (cartItems[itemName] ?? 0) + 1;
+      _localCartCount[itemName] = (_localCartCount[itemName] ?? 0) + 1;
     });
+    
+    Provider.of<FoodCartProvider>(context, listen: false).addItem(item);
+    
+;
   }
 
   void removeFromCart(String itemName) {
     setState(() {
-      if (cartItems[itemName] != null && cartItems[itemName]! > 0) {
-        cartItems[itemName] = cartItems[itemName]! - 1;
-        if (cartItems[itemName] == 0) {
-          cartItems.remove(itemName);
+      if (_localCartCount[itemName] != null && _localCartCount[itemName]! > 0) {
+        _localCartCount[itemName] = _localCartCount[itemName]! - 1;
+        if (_localCartCount[itemName] == 0) {
+          _localCartCount.remove(itemName);
         }
       }
     });
+    
+    final itemId = itemName.toLowerCase().replaceAll(' ', '_');
+    Provider.of<FoodCartProvider>(context, listen: false).removeSingle(itemId);
   }
 
   int get _totalItems {
-    return cartItems.values.fold(0, (sum, count) => sum + count);
+    return _localCartCount.values.fold(0, (sum, count) => sum + count);
   }
 
   @override
@@ -193,6 +216,35 @@ class _GroceryCategoryScreenState extends State<GroceryCategoryScreen> {
           ),
         ),
         actions: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart, color: Colors.black),
+                onPressed: () => Navigator.of(context).pushNamed('/cart'),
+              ),
+              if (_localCartCount.isNotEmpty)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF27A600),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${_totalItems}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
             onPressed: () {},
@@ -358,7 +410,7 @@ class _GroceryCategoryScreenState extends State<GroceryCategoryScreen> {
 
   Widget _buildProductCard(Map<String, dynamic> item) {
     final itemName = item['name'];
-    final itemCount = cartItems[itemName] ?? 0;
+    final itemCount = _localCartCount[itemName] ?? 0;
     
     return Container(
       decoration: BoxDecoration(

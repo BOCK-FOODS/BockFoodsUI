@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'providers/cart_provider.dart';
-import 'providers/instamart_cart_provider.dart';
+import 'package:bock_foods/providers/cart_provider.dart';
+import 'package:bock_foods/providers/instamart_cart_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/restaurants_screen.dart';
 import 'screens/cart_screen.dart';
@@ -42,7 +42,7 @@ class BockFoodsApp extends StatelessWidget {
           CheckoutScreen.routeName: (_) => const CheckoutScreen(),
           InstamartScreen.routeName: (_) => const InstamartScreen(),
         
-          AccountScreen.routeName: (_) => const AccountScreen(),
+          //AccountScreen.routeName: (_) => const AccountScreen(),
         },
       ),
     );

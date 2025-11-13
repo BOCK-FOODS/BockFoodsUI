@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 8),
               TextButton.icon(
                 onPressed: () => setState(() => _selectedIndex = 2),
-                icon: const Icon(Icons.local_grocery_store, color: Color(0xFF5B67CA)),
+                icon: const Icon(Icons.shopping_basket, color: Color(0xFF5B67CA)),
                 label: const Text('Instamart', style: TextStyle(color: Color(0xFF2D3142))),
               ),
               const SizedBox(width: 8),

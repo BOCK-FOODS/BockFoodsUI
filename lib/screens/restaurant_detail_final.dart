@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
+import '../models/food_item.dart';
 
 class RestaurantDetailFinalScreen extends StatefulWidget {
   static const routeName = '/restaurant-detail-final';
@@ -9,8 +12,10 @@ class RestaurantDetailFinalScreen extends StatefulWidget {
 }
 
 class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScreen> {
-  final Map<String, int> _cart = {};
+  final Map<String, int> _localCartCount = {};
   final TextEditingController _searchController = TextEditingController();
+  String _currentArea = '';
+  List<Map<String, dynamic>> _menuItems = [];
   
   // Menu items for different locations
   final Map<String, List<Map<String, dynamic>>> _locationMenus = {
@@ -276,34 +281,45 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
     ],
   };
 
-  List<Map<String, dynamic>> _menuItems = [];
-  String _currentArea = '';
-
   int get _totalItems {
-    return _cart.values.fold(0, (sum, count) => sum + count);
+    return _localCartCount.values.fold(0, (sum, count) => sum + count);
   }
 
   double get _totalPrice {
-    double total = 0;
-    _cart.forEach((itemName, count) {
-      final item = _menuItems.firstWhere((item) => item['name'] == itemName);
-      total += item['price'] * count;
-    });
-    return total;
+    final foodCart = Provider.of<FoodCartProvider>(context, listen: false);
+    return foodCart.subtotal;
   }
 
-  void _addToCart(String itemName) {
+  void addToCart(String itemName) {
+    final foodCart = Provider.of<FoodCartProvider>(context, listen: false);
+    final item = _menuItems.firstWhere((item) => item['name'] == itemName);
+    
+    final foodItem = FoodItem(
+      id: item['id'] ?? itemName,
+      name: item['name'],
+      price: item['price'],
+      description: item['description'] ?? '',
+      imageUrl: item['imageUrl'] ?? '',
+      category: item['category'] ?? '',
+      isVeg: item['isVeg'] ?? true,
+    );
+    
     setState(() {
-      _cart[itemName] = (_cart[itemName] ?? 0) + 1;
+      foodCart.addItem(foodItem);
+      _localCartCount[itemName] = (_localCartCount[itemName] ?? 0) + 1;
     });
   }
 
-  void _removeFromCart(String itemName) {
+  void removeFromCart(String itemName) {
+    final foodCart = Provider.of<FoodCartProvider>(context, listen: false);
+    final item = _menuItems.firstWhere((item) => item['name'] == itemName);
+    
     setState(() {
-      if (_cart[itemName] != null && _cart[itemName]! > 0) {
-        _cart[itemName] = _cart[itemName]! - 1;
-        if (_cart[itemName] == 0) {
-          _cart.remove(itemName);
+      if (_localCartCount[itemName] != null && _localCartCount[itemName]! > 0) {
+        foodCart.removeItem(item['id'] ?? itemName);
+        _localCartCount[itemName] = _localCartCount[itemName]! - 1;
+        if (_localCartCount[itemName] == 0) {
+          _localCartCount.remove(itemName);
         }
       }
     });
@@ -317,13 +333,10 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
     final area = args['area'] ?? 'Koramangala';
     
     // Set menu items based on area
-    if (_currentArea != area) {
-      _currentArea = area;
-      _menuItems = _locationMenus[area] ?? _locationMenus['Koramangala']!;
-      _cart.clear(); // Clear cart when changing location
-    }
-    
-    final isWeb = MediaQuery.of(context).size.width > 600;
+      if (_currentArea != area) {
+  _currentArea = area;
+  _menuItems = _locationMenus[area] ?? _locationMenus['Koramangala']!;
+    }    final isWeb = MediaQuery.of(context).size.width > 600;
     final screenWidth = MediaQuery.of(context).size.width;
     final contentWidth = isWeb ? screenWidth * 0.75 : screenWidth;
 
@@ -345,36 +358,7 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
                       icon: const Icon(Icons.arrow_back, color: Colors.black),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                    actions: [
-                      IconButton(
-                        icon: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xFF4CAF50)),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.share, size: 16, color: Color(0xFF4CAF50)),
-                              SizedBox(width: 4),
-                              Text(
-                                'SHARE',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF4CAF50),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.favorite_border, color: Colors.black),
-                        onPressed: () {},
-                      ),
-                    ],
+                    actions: [],
                   ),
                   
                   // Restaurant Header
@@ -740,32 +724,6 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
                           ),
                         ],
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          _showCartDialog();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Row(
-                            children: [
-                              Text(
-                                'View Cart',
-                                style: TextStyle(
-                                  color: Color(0xFF4CAF50),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Icon(Icons.shopping_cart, color: Color(0xFF4CAF50), size: 20),
-                            ],
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -776,82 +734,7 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
     );
   }
 
-  void _showCartDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Your Cart'),
-        content: SizedBox(
-          width: 300,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ..._cart.entries.map((entry) {
-                final item = _menuItems.firstWhere((item) => item['name'] == entry.key);
-                return ListTile(
-                  title: Text(item['name']),
-                  subtitle: Text('₹${item['price']} x ${entry.value} = ₹${item['price'] * entry.value}'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove_circle_outline, color: Color(0xFF4CAF50)),
-                        onPressed: () {
-                          _removeFromCart(entry.key);
-                          Navigator.of(ctx).pop();
-                          if (_cart.isNotEmpty) {
-                           _showCartDialog();
-                          }
-                        },
-                      ),
-                      Text('${entry.value}'),
-                      IconButton(
-                        icon: const Icon(Icons.add_circle_outline, color: Color(0xFF4CAF50)),
-                        onPressed: () {
-                          _addToCart(entry.key);
-                          Navigator.of(ctx).pop();
-                          _showCartDialog();
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              }),
-              const Divider(),
-              ListTile(
-                title: const Text('Total', style: TextStyle(fontWeight: FontWeight.bold)),
-                trailing: Text(
-                  '₹${_totalPrice.toStringAsFixed(0)}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF4CAF50)),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Continue Shopping', style: TextStyle(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Proceeding to checkout...'),
-                  backgroundColor: Color(0xFF4CAF50),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
-            child: const Text('Checkout', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
+  // Cart dialog removed — navigation now goes to a unified CartScreen
 
   Widget _buildFilterChip(String label, IconData? icon, bool selected) {
     return Container(
@@ -883,7 +766,7 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
   }
 
   Widget _buildMenuItem(Map<String, dynamic> item) {
-    final itemCount = _cart[item['name']] ?? 0;
+    final itemCount = _localCartCount[item['name']] ?? 0;
     
     return Container(
       decoration: BoxDecoration(
@@ -1033,7 +916,7 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
                   // Add Button
                   itemCount == 0
                       ? GestureDetector(
-                          onTap: () => _addToCart(item['name']),
+                          onTap: () => addToCart(item['name']),
                           child: Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 6),
@@ -1064,7 +947,7 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               GestureDetector(
-                                onTap: () => _removeFromCart(item['name']),
+                                onTap: () => removeFromCart(item['name']),
                                 child: const Icon(Icons.remove, color: Colors.white, size: 16),
                               ),
                               Text(
@@ -1076,7 +959,7 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () => _addToCart(item['name']),
+                                onTap: () => addToCart(item['name']),
                                 child: const Icon(Icons.add, color: Colors.white, size: 16),
                               ),
                             ],

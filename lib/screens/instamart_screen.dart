@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/instamart_card.dart';
-import '../models/sample_data.dart';
+import 'package:provider/provider.dart';
+import '../providers/instamart_cart_provider.dart';
+import '../models/food_item.dart';
 import 'grocery_category_screen.dart';
 
 class InstamartScreen extends StatefulWidget {
@@ -14,31 +15,49 @@ class InstamartScreen extends StatefulWidget {
 class _InstamartScreenState extends State<InstamartScreen> {
   // Sample grocery items for hot deals
   final List<Map<String, dynamic>> groceryItems = [
-    {'name': 'Fortune Sunlite Oil', 'price': '185', 'image': Icons.water_drop},
-    {'name': 'Parle-G Biscuits', 'price': '45', 'image': Icons.cookie},
-    {'name': 'Amul Pure Ghee', 'price': '550', 'image': Icons.liquor},
-    {'name': 'India Gate Basmati', 'price': '320', 'image': Icons.grain},
-    {'name': 'Tata Tea Premium', 'price': '240', 'image': Icons.coffee},
-    {'name': 'Britannia Bread', 'price': '35', 'image': Icons.breakfast_dining},
+    {'name': 'Fortune Sunlite Oil', 'price': '185', 'image': Icons.water_drop, 'category': 'Oils'},
+    {'name': 'Parle-G Biscuits', 'price': '45', 'image': Icons.cookie, 'category': 'Biscuits'},
+    {'name': 'Amul Pure Ghee', 'price': '550', 'image': Icons.liquor, 'category': 'Dairy'},
+    {'name': 'India Gate Basmati', 'price': '320', 'image': Icons.grain, 'category': 'Rice'},
+    {'name': 'Tata Tea Premium', 'price': '240', 'image': Icons.coffee, 'category': 'Beverages'},
+    {'name': 'Britannia Bread', 'price': '35', 'image': Icons.breakfast_dining, 'category': 'Bread'},
   ];
 
-  Map<String, int> cartItems = {};
+  Map<String, int> _localCartCount = {};
 
   void addToCart(String itemName) {
+    final itemData = groceryItems.firstWhere((item) => item['name'] == itemName);
+    
+    final item = FoodItem(
+      id: itemName.toLowerCase().replaceAll(' ', '_'),
+      name: itemName,
+      price: double.parse(itemData['price']),
+      description: '',
+      category: itemData['category'],
+      imageUrl: '',
+      isVeg: true,
+    );
+
     setState(() {
-      cartItems[itemName] = (cartItems[itemName] ?? 0) + 1;
+      _localCartCount[itemName] = (_localCartCount[itemName] ?? 0) + 1;
     });
+    
+    Provider.of<InstamartCartProvider>(context, listen: false).addItem(item);
+;
   }
 
   void removeFromCart(String itemName) {
     setState(() {
-      if (cartItems[itemName] != null && cartItems[itemName]! > 0) {
-        cartItems[itemName] = cartItems[itemName]! - 1;
-        if (cartItems[itemName] == 0) {
-          cartItems.remove(itemName);
+      if (_localCartCount[itemName] != null && _localCartCount[itemName]! > 0) {
+        _localCartCount[itemName] = _localCartCount[itemName]! - 1;
+        if (_localCartCount[itemName] == 0) {
+          _localCartCount.remove(itemName);
         }
       }
     });
+    
+    final itemId = itemName.toLowerCase().replaceAll(' ', '_');
+    Provider.of<InstamartCartProvider>(context, listen: false).removeSingle(itemId);
   }
 
   void _navigateToCategory(String categoryName, IconData icon, Color color) {
@@ -85,6 +104,35 @@ class _InstamartScreenState extends State<InstamartScreen> {
           ],
         ),
         actions: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart, color: Colors.black),
+                onPressed: () => Navigator.of(context).pushNamed('/cart'),
+              ),
+              if (_localCartCount.isNotEmpty)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF27A600),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${_localCartCount.values.fold(0, (sum, value) => sum + value)}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
           IconButton(
             icon: const CircleAvatar(
               backgroundColor: Colors.grey,
@@ -423,7 +471,7 @@ class _InstamartScreenState extends State<InstamartScreen> {
                   children: [
                     _buildCategoryCard('Fresh\nVegetables', Icons.eco, Colors.green),
                     _buildCategoryCard('Fresh Fruits', Icons.local_florist, Colors.orange),
-                    _buildCategoryCard('Dair and Bread\n', Icons.egg, Colors.blue),
+                    _buildCategoryCard('Dairy and Bread\n', Icons.egg, Colors.blue),
                     _buildCategoryCard('Breakfast', Icons.breakfast_dining, Colors.amber),
                     _buildCategoryCard('Atta, Rice and\nDal', Icons.grain, Colors.brown),
                     _buildCategoryCard('Oils and Ghee', Icons.water_drop, Colors.yellow),
@@ -447,7 +495,7 @@ class _InstamartScreenState extends State<InstamartScreen> {
 
   Widget _buildGroceryCard(Map<String, dynamic> item) {
     final itemName = item['name'];
-    final itemCount = cartItems[itemName] ?? 0;
+    final itemCount = _localCartCount[itemName] ?? 0;
     
     return Container(
       decoration: BoxDecoration(

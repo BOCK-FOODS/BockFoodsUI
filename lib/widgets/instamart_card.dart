@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/food_item.dart';
-import '../providers/instamart_cart_provider.dart' as instamart;
+import 'package:bock_foods/providers/instamart_cart_provider.dart';
 import 'package:provider/provider.dart';
 
 class InstamartCard extends StatelessWidget {
@@ -36,8 +36,8 @@ class InstamartCard extends StatelessWidget {
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF27A600)),
               onPressed: (){
-                Provider.of<instamart.InstamartCartProvider>(context, listen: false).addItem(item);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${item.name} added to instamart cart')));
+                Provider.of<InstamartCartProvider>(context, listen: false).addItem(item);
+                // No snackbar per UX — Cart screen shows unified cart
               },
               child: const Text('ADD'),
             )

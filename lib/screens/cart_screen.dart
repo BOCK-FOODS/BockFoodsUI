@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/cart_provider.dart';
-import '../providers/instamart_cart_provider.dart';
+import 'package:bock_foods/providers/cart_provider.dart';
+import 'package:bock_foods/providers/instamart_cart_provider.dart';
 import 'checkout_screen.dart';
 
 class CartScreen extends StatelessWidget {
@@ -33,39 +33,31 @@ class CartScreen extends StatelessWidget {
           child: ListView(
             padding: EdgeInsets.all(isWeb ? 24 : 16),
             children: [
-              // Food Cart Section
-              _buildSectionHeader(context, 'Food Cart', foodCart.items.length),
+              _buildSectionHeader(context, 'Your Cart', foodCart.items.length + instamartCart.items.length),
               const SizedBox(height: 12),
-              if (foodCart.items.isEmpty)
-                _buildEmptyCartMessage('Your food cart is empty')
+              if (foodCart.items.isEmpty && instamartCart.items.isEmpty)
+                _buildEmptyCartMessage('Your cart is empty')
               else
-                ...foodCart.items.values.map((ci) => _buildCartItem(
-                  context: context,
-                  name: ci.item.name,
-                  price: ci.item.price,
-                  quantity: ci.qty,
-                  onRemove: () => foodCart.removeSingle(ci.item.id),
-                  onAdd: () => foodCart.addItem(ci.item),
-                  isWeb: isWeb,
-                )).toList(),
-
-              const SizedBox(height: 24),
-
-              // Instamart Cart Section
-              _buildSectionHeader(context, 'Instamart Cart', instamartCart.items.length),
-              const SizedBox(height: 12),
-              if (instamartCart.items.isEmpty)
-                _buildEmptyCartMessage('Your Instamart cart is empty')
-              else
-                ...instamartCart.items.values.map((ci) => _buildCartItem(
-                  context: context,
-                  name: ci.item.name,
-                  price: ci.item.price,
-                  quantity: ci.qty,
-                  onRemove: () => instamartCart.removeSingle(ci.item.id),
-                  onAdd: () => instamartCart.addItem(ci.item),
-                  isWeb: isWeb,
-                )).toList(),
+                ...[
+                  ...foodCart.items.values.map((ci) => _buildCartItem(
+                    context: context,
+                    name: ci.item.name,
+                    price: ci.item.price,
+                    quantity: ci.qty,
+                    onRemove: () => foodCart.removeSingle(ci.item.id),
+                    onAdd: () => foodCart.addItem(ci.item),
+                    isWeb: isWeb,
+                  )),
+                  ...instamartCart.items.values.map((ci) => _buildCartItem(
+                    context: context,
+                    name: ci.item.name,
+                    price: ci.item.price,
+                    quantity: ci.qty,
+                    onRemove: () => instamartCart.removeSingle(ci.item.id),
+                    onAdd: () => instamartCart.addItem(ci.item),
+                    isWeb: isWeb,
+                  )),
+                ],
 
               const SizedBox(height: 32),
 

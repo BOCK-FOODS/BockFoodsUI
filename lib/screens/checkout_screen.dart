@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/cart_provider.dart';
-import '../providers/instamart_cart_provider.dart';
+import 'package:bock_foods/providers/cart_provider.dart';
+import 'package:bock_foods/providers/instamart_cart_provider.dart';
 
 class CheckoutScreen extends StatefulWidget {
   static const routeName = '/checkout';

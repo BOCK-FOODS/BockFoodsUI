@@ -7,6 +7,7 @@ import 'screens/menu_management_screen.dart';
 import 'screens/orders_screen.dart';
 import 'screens/customers_screen.dart';
 import 'screens/delivery_partners_screen.dart';
+import 'screens/drones_screen.dart';
 import 'screens/settings_screen.dart';
 
 void main() {
@@ -48,6 +49,7 @@ class _AdminLayoutState extends State<AdminLayout> {
     const OrdersScreen(),
     const CustomersScreen(),
     const DeliveryPartnersScreen(),
+    const DronesScreen(),
     const SettingsScreen(),
   ];
 
@@ -101,7 +103,8 @@ class _AdminLayoutState extends State<AdminLayout> {
                       _buildNavItem(4, Icons.shopping_bag, 'Orders'),
                       _buildNavItem(5, Icons.people, 'Customers'),
                       _buildNavItem(6, Icons.delivery_dining, 'Delivery Partners'),
-                      _buildNavItem(7, Icons.settings, 'Settings'),
+                      _buildNavItem(7, Icons.airplanemode_active, 'Drones'),
+                      _buildNavItem(8, Icons.settings, 'Settings'),
                     ],
                   ),
                 ),

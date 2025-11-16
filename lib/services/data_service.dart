@@ -2,7 +2,7 @@ import 'dart:math';
 import '../models/city.dart';
 import '../models/cloud_kitchen.dart';
 import '../models/menu_item.dart';
-import '../models/order.dart';
+import '../models/drone.dart';
 
 class DataService {
   static final DataService _instance = DataService._internal();
@@ -12,12 +12,14 @@ class DataService {
   final List<City> _cities = [];
   final List<CloudKitchen> _cloudKitchens = [];
   final List<MenuItem> _menuItems = [];
+  final List<Drone> _drones = [];
 
   void initializeMockData() {
     if (_cities.isEmpty) {
       _initializeCities();
       _initializeCloudKitchens();
       _initializeMenuItems();
+      _initializeDrones();
     }
   }
 
@@ -89,6 +91,27 @@ class DataService {
       }
       
       kitchen.totalMenuItems = 15;
+    }
+  }
+
+  void _initializeDrones() {
+    final droneTypes = ['Quadcopter', 'Hexacopter'];
+    
+    for (var kitchen in _cloudKitchens) {
+      for (int i = 0; i < 2; i++) {
+        _drones.add(Drone(
+          id: 'DRONE${_drones.length + 1}',
+          name: '${droneTypes[i % 2]} ${kitchen.area} - ${i + 1}',
+          droneType: droneTypes[i % 2],
+          cloudKitchenId: kitchen.id,
+          cloudKitchenName: kitchen.name,
+          status: i % 3 == 0 ? 'In Maintenance' : 'Active',
+          maxCarryCapacity: i % 2 == 0 ? 2.5 : 3.5,
+          flightRange: 5.0 + (i * 2),
+          totalDeliveries: Random().nextInt(50),
+          isActive: i % 3 != 0,
+        ));
+      }
     }
   }
 
@@ -170,4 +193,28 @@ class DataService {
   String generateCityId() => 'CITY${(_cities.length + 1).toString().padLeft(3, '0')}';
   String generateCloudKitchenId() => 'CK${(_cloudKitchens.length + 1).toString().padLeft(3, '0')}';
   String generateMenuItemId() => 'MENU${_menuItems.length + 1}';
+
+  // Drone CRUD
+  List<Drone> getAllDrones() => List.unmodifiable(_drones);
+
+  List<Drone> getDronesByCloudKitchen(String cloudKitchenId) {
+    return _drones.where((drone) => drone.cloudKitchenId == cloudKitchenId).toList();
+  }
+
+  void addDrone(Drone drone) {
+    _drones.add(drone);
+  }
+
+  void updateDrone(String id, Drone updatedDrone) {
+    final index = _drones.indexWhere((d) => d.id == id);
+    if (index != -1) {
+      _drones[index] = updatedDrone;
+    }
+  }
+
+  void deleteDrone(String id) {
+    _drones.removeWhere((d) => d.id == id);
+  }
+
+  String generateDroneId() => 'DRONE${(_drones.length + 1).toString().padLeft(3, '0')}';
 }

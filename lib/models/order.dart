@@ -6,6 +6,7 @@ class Order {
   String status;
   String orderDate;
   String deliveryAddress;
+  String phoneNumber;
 
   Order({
     required this.id,
@@ -15,6 +16,7 @@ class Order {
     required this.status,
     required this.orderDate,
     required this.deliveryAddress,
+    this.phoneNumber = '',
   });
 }
 

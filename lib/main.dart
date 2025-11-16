@@ -27,6 +27,7 @@ class BockFoodsApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Bock Foods',
         theme: ThemeData(
           primaryColor: const Color(0xFF27A600),

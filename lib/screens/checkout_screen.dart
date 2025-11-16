@@ -161,7 +161,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       _buildStepCard(
                         step: 2,
                         icon: Icons.payment_outlined,
-                        title: 'Payment',
+                        title: 'Payment Via Cash on Delivery',
                         subtitle: '',
                         content: _buildPaymentSelection(),
                         enabled: _isStepComplete(1),
@@ -175,9 +175,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               if (isWeb)
                 Expanded(
                   flex: 4,
-                  child: Container(
-                    margin: const EdgeInsets.all(16),
-                    child: _buildOrderSummary(foodCart, instamartCart),
+                  child: SingleChildScrollView(
+                    child: Container(
+                      margin: const EdgeInsets.all(16),
+                      child: _buildOrderSummary(foodCart, instamartCart),
+                    ),
                   ),
                 ),
             ],
@@ -635,6 +637,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               subtitle: const Text(
                 'Unwell, or avoiding contact? Please select no-contact delivery. Partner will safely place the order outside your door (not for COD)',
                 style: TextStyle(fontSize: 11),
+                overflow: TextOverflow.visible,
               ),
               controlAffinity: ListTileControlAffinity.leading,
               contentPadding: EdgeInsets.zero,

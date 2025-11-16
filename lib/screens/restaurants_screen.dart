@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'restaurant_detail_final.dart';
-// Add-to-cart removed from this screen; cart is managed in CartScreen via FoodCartProvider
+
 
 class RestaurantsScreen extends StatefulWidget {
   static const routeName = '/restaurants';

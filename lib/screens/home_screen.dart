@@ -31,65 +31,81 @@ class _HomeScreenState extends State<HomeScreen> {
     final width = MediaQuery.of(context).size.width;
     final isWide = width >= 600;
 
-    if (isWide) {
-      // Web / wide layout: show top nav as AppBar actions
-      return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: Row(
-            children: [
-              const Text('Bock Foods', 
-                style: TextStyle(
-                  color: Color(0xFF2D3142),
-                  fontWeight: FontWeight.bold,
-                )),
-              const Spacer(),
-              TextButton.icon(
-                onPressed: () => setState(() => _selectedIndex = 0),
-                icon: const Icon(Icons.home, color: Color(0xFF5B67CA)),
-                label: const Text('Home', style: TextStyle(color: Color(0xFF2D3142))),
+    // ADDING WILLOPSCOPE WRAPPER
+    return WillPopScope(
+      onWillPop: () async {
+        // Disable back button from leaving home screen
+        return false;
+      },
+      child: isWide
+          ? Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.white,
+                elevation: 0,
+                title: Row(
+                  children: [
+                    const Text(
+                      'Bock Foods',
+                      style: TextStyle(
+                        color: Color(0xFF2D3142),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    TextButton.icon(
+                      onPressed: () => setState(() => _selectedIndex = 0),
+                      icon: const Icon(Icons.home, color: Color(0xFF5B67CA)),
+                      label: const Text('Home',
+                          style: TextStyle(color: Color(0xFF2D3142))),
+                    ),
+                    const SizedBox(width: 8),
+                    TextButton.icon(
+                      onPressed: () => setState(() => _selectedIndex = 1),
+                      icon:
+                          const Icon(Icons.restaurant, color: Color(0xFF5B67CA)),
+                      label: const Text('Food',
+                          style: TextStyle(color: Color(0xFF2D3142))),
+                    ),
+                    const SizedBox(width: 8),
+                    TextButton.icon(
+                      onPressed: () => setState(() => _selectedIndex = 2),
+                      icon: const Icon(Icons.shopping_basket,
+                          color: Color(0xFF5B67CA)),
+                      label: const Text('Instamart',
+                          style: TextStyle(color: Color(0xFF2D3142))),
+                    ),
+                    const SizedBox(width: 8),
+                    TextButton.icon(
+                      onPressed: () => setState(() => _selectedIndex = 3),
+                      icon: const Icon(Icons.shopping_cart,
+                          color: Color(0xFF5B67CA)),
+                      label: const Text('Cart',
+                          style: TextStyle(color: Color(0xFF2D3142))),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 8),
-              TextButton.icon(
-                onPressed: () => setState(() => _selectedIndex = 1),
-                icon: const Icon(Icons.restaurant, color: Color(0xFF5B67CA)),
-                label: const Text('Food', style: TextStyle(color: Color(0xFF2D3142))),
+              body: _tabs[_selectedIndex],
+            )
+          : Scaffold(
+              body: _tabs[_selectedIndex],
+              bottomNavigationBar: BottomNavigationBar(
+                currentIndex: _selectedIndex,
+                selectedItemColor: const Color(0xFF5B67CA),
+                unselectedItemColor: Colors.grey,
+                onTap: _onItemTapped,
+                items: const [
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.home), label: 'Home'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.restaurant), label: 'Food'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.shopping_basket), label: 'Instamart'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.shopping_cart), label: 'Cart'),
+                ],
               ),
-              const SizedBox(width: 8),
-              TextButton.icon(
-                onPressed: () => setState(() => _selectedIndex = 2),
-                icon: const Icon(Icons.shopping_basket, color: Color(0xFF5B67CA)),
-                label: const Text('Instamart', style: TextStyle(color: Color(0xFF2D3142))),
-              ),
-              const SizedBox(width: 8),
-              TextButton.icon(
-                onPressed: () => setState(() => _selectedIndex = 3),
-                icon: const Icon(Icons.shopping_cart, color: Color(0xFF5B67CA)),
-                label: const Text('Cart', style: TextStyle(color: Color(0xFF2D3142))),
-              ),
-            ],
-          ),
-        ),
-        body: _tabs[_selectedIndex],
-      );
-    }
-
-    // Mobile layout: bottom navigation
-    return Scaffold(
-      body: _tabs[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFF5B67CA),
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.restaurant), label: 'Food'),
-          BottomNavigationBarItem(icon: Icon(Icons.local_grocery_store), label: 'Instamart'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
-        ],
-      ),
+            ),
     );
   }
 }
@@ -136,7 +152,6 @@ class _FoodHomeState extends State<_FoodHome> {
                   ),
                   child: Stack(
                     children: [
-                      // Decorative vegetables on left
                       Positioned(
                         left: -50,
                         top: 20,
@@ -149,7 +164,6 @@ class _FoodHomeState extends State<_FoodHome> {
                           ),
                         ),
                       ),
-                      // Decorative food on right
                       Positioned(
                         right: -30,
                         top: 40,
@@ -168,7 +182,6 @@ class _FoodHomeState extends State<_FoodHome> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const SizedBox(height: 20),
-                            // Main Heading
                             const Text(
                               'Order food & groceries. Discover',
                               textAlign: TextAlign.center,
@@ -190,15 +203,14 @@ class _FoodHomeState extends State<_FoodHome> {
                               ),
                             ),
                             const SizedBox(height: 32),
-                            
-                            // Search Bars
+
                             Row(
                               children: [
-                                // Location Input
                                 Expanded(
                                   flex: 2,
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 4),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(12),
@@ -212,30 +224,35 @@ class _FoodHomeState extends State<_FoodHome> {
                                     ),
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.location_on, color: Color(0xFFFF6B35), size: 24),
+                                        const Icon(Icons.location_on,
+                                            color: Color(0xFFFF6B35), size: 24),
                                         const SizedBox(width: 12),
                                         Expanded(
                                           child: TextField(
                                             controller: _locationController,
                                             decoration: const InputDecoration(
-                                              hintText: 'Enter your delivery location',
-                                              hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                                              hintText:
+                                                  'Enter your delivery location',
+                                              hintStyle: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 14),
                                               border: InputBorder.none,
                                             ),
                                           ),
                                         ),
-                                        const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+                                        const Icon(Icons.keyboard_arrow_down,
+                                            color: Colors.grey),
                                       ],
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                
-                                // Search Input
+
                                 Expanded(
                                   flex: 3,
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 4),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(12),
@@ -253,13 +270,17 @@ class _FoodHomeState extends State<_FoodHome> {
                                           child: TextField(
                                             controller: _searchController,
                                             decoration: const InputDecoration(
-                                              hintText: 'Search for restaurant, item or more',
-                                              hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                                              hintText:
+                                                  'Search for restaurant, item or more',
+                                              hintStyle: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 14),
                                               border: InputBorder.none,
                                             ),
                                           ),
                                         ),
-                                        const Icon(Icons.search, color: Colors.grey),
+                                        const Icon(Icons.search,
+                                            color: Colors.grey),
                                       ],
                                     ),
                                   ),
@@ -290,7 +311,8 @@ class _FoodHomeState extends State<_FoodHome> {
                           color: const Color(0xFFFF6B35),
                           imagePath: 'food_delivery',
                           onTap: () {
-                            final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+                            final homeState = context
+                                .findAncestorStateOfType<_HomeScreenState>();
                             homeState?.setState(() {
                               homeState._selectedIndex = 1;
                             });
@@ -307,20 +329,19 @@ class _FoodHomeState extends State<_FoodHome> {
                           color: const Color(0xFF27A600),
                           imagePath: 'instamart',
                           onTap: () {
-                            final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+                            final homeState = context
+                                .findAncestorStateOfType<_HomeScreenState>();
                             homeState?.setState(() {
                               homeState._selectedIndex = 2;
                             });
                           },
                         ),
                       ),
-                      const SizedBox(width: 16),
                     ],
                   ),
                 ),
               ),
 
-              // Live it up section
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -353,20 +374,20 @@ class _FoodHomeState extends State<_FoodHome> {
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
+                          children: const [
+                            Text(
                               'Crafted with ',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Color(0xFFB8B8B8),
                               ),
                             ),
-                            const Icon(
+                            Icon(
                               Icons.favorite,
                               color: Colors.red,
                               size: 16,
                             ),
-                            const Text(
+                            Text(
                               ' in Bengaluru, India',
                               style: TextStyle(
                                 fontSize: 14,
@@ -390,7 +411,6 @@ class _FoodHomeState extends State<_FoodHome> {
   }
 }
 
-// Service Card Widget
 class _ServiceCard extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -467,7 +487,6 @@ class _ServiceCard extends StatelessWidget {
             Expanded(
               child: Stack(
                 children: [
-                  // Image placeholder with icon
                   Positioned(
                     right: 20,
                     bottom: 20,
@@ -485,7 +504,6 @@ class _ServiceCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Arrow button
                   Positioned(
                     left: 20,
                     bottom: 20,

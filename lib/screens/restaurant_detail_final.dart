@@ -291,23 +291,41 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
   }
 
   void addToCart(String itemName) {
-    final foodCart = Provider.of<FoodCartProvider>(context, listen: false);
-    final item = _menuItems.firstWhere((item) => item['name'] == itemName);
-    
-    final foodItem = FoodItem(
-      id: item['id'] ?? itemName,
-      name: item['name'],
-      price: item['price'],
-      description: item['description'] ?? '',
-      imageUrl: item['imageUrl'] ?? '',
-      category: item['category'] ?? '',
-      isVeg: item['isVeg'] ?? true,
-    );
-    
-    setState(() {
-      foodCart.addItem(foodItem);
-      _localCartCount[itemName] = (_localCartCount[itemName] ?? 0) + 1;
-    });
+    try {
+      print('=== ADD TO CART DEBUG ===');
+      print('Item Name: "$itemName"');
+      print('Menu Items Count: ${_menuItems.length}');
+      print('Menu Items: ${_menuItems.map((e) => e['name']).toList()}');
+      
+      final foodCart = Provider.of<FoodCartProvider>(context, listen: false);
+      final item = _menuItems.firstWhere((item) => item['name'] == itemName);
+      
+      print('Found item: ${item['name']}');
+      
+      final foodItem = FoodItem(
+        id: item['id'] ?? itemName,
+        name: item['name'],
+        price: (item['price'] as num).toDouble(),
+        description: item['description'] ?? '',
+        imageUrl: item['imageUrl'] ?? '',
+        category: item['category'] ?? '',
+        isVeg: item['isVeg'] ?? true,
+      );
+      
+      print('Creating FoodItem: ${foodItem.name}');
+      
+      setState(() {
+        foodCart.addItem(foodItem);
+        _localCartCount[itemName] = (_localCartCount[itemName] ?? 0) + 1;
+        print('Local cart count updated: ${_localCartCount[itemName]}');
+      });
+      
+      print('=== ADD TO CART SUCCESS ===');
+    } catch (e) {
+      print('=== ERROR ADDING TO CART ===');
+      print('Error: $e');
+      print('Stack trace: ${StackTrace.current}');
+    }
   }
 
   void removeFromCart(String itemName) {
@@ -648,89 +666,58 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
                     ),
                   ),
                   
-                  const SliverToBoxAdapter(child: SizedBox(height: 100)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 20)),
                 ],
               ),
             ),
           ),
           
-          // Floating Menu Button
-          Positioned(
-            right: isWeb ? (screenWidth - contentWidth) / 2 + 16 : 16,
-            bottom: _totalItems > 0 ? 100 : 30,
-            child: FloatingActionButton(
-              onPressed: () {
-                // Show menu categories
-              },
-              backgroundColor: const Color(0xFF4CAF50),
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.restaurant_menu, color: Colors.white, size: 20),
-                  SizedBox(height: 2),
-                  Text(
-                    'MENU',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
+        ],
+      ),
+      // Cart Bottom Bar using bottomNavigationBar
+      bottomNavigationBar: _totalItems > 0
+          ? Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF4CAF50),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, -5),
                   ),
                 ],
               ),
-            ),
-          ),
-          
-          // Cart Bottom Bar
-          if (_totalItems > 0)
-            Positioned(
-              bottom: 0,
-              left: isWeb ? (screenWidth - contentWidth) / 2 : 0,
-              width: contentWidth,
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF4CAF50),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, -5),
+              child: SafeArea(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '$_totalItems Item${_totalItems > 1 ? 's' : ''}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '₹${_totalPrice.toStringAsFixed(0)}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                child: SafeArea(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '$_totalItems Item${_totalItems > 1 ? 's' : ''}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '₹${_totalPrice.toStringAsFixed(0)}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
               ),
-            ),
-        ],
-      ),
+            )
+          : null,
     );
   }
 
@@ -855,116 +842,140 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
           Expanded(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item['name'],
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          item['name'],
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 3),
-                      Row(
-                        children: [
-                          if (item['originalPrice'] != null) ...[
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            if (item['originalPrice'] != null) ...[
+                              Text(
+                                '₹${item['originalPrice']}',
+                                style: const TextStyle(
+                                  fontSize: 9,
+                                  color: Colors.grey,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                              const SizedBox(width: 3),
+                            ],
                             Text(
-                              '₹${item['originalPrice']}',
+                              '₹${item['price']}',
                               style: const TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey,
-                                decoration: TextDecoration.lineThrough,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF4CAF50),
                               ),
                             ),
-                            const SizedBox(width: 4),
                           ],
-                          Text(
-                            '₹${item['price']}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF4CAF50),
+                        ),
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            const Icon(Icons.star, size: 10, color: Color(0xFF4CAF50)),
+                            const SizedBox(width: 2),
+                            Flexible(
+                              child: Text(
+                                '${item['rating']} (${item['ratingCount']})',
+                                style: const TextStyle(
+                                  fontSize: 8,
+                                  color: Colors.grey,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 3),
-                      Row(
-                        children: [
-                          const Icon(Icons.star, size: 11, color: Color(0xFF4CAF50)),
-                          const SizedBox(width: 3),
-                          Text(
-                            '${item['rating']} (${item['ratingCount']})',
-                            style: const TextStyle(
-                              fontSize: 9,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   
                   // Add Button
-                  itemCount == 0
-                      ? GestureDetector(
-                          onTap: () => addToCart(item['name']),
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
+                  SizedBox(
+                    width: double.infinity,
+                    height: itemCount == 0 ? 28 : 26,
+                    child: itemCount == 0
+                        ? Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                print('ADD BUTTON TAPPED: ${item['name']}');
+                                addToCart(item['name']);
+                              },
                               borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: const Color(0xFF4CAF50)),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'ADD',
-                                style: TextStyle(
-                                  color: Color(0xFF4CAF50),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF4CAF50),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              GestureDetector(
-                                onTap: () => removeFromCart(item['name']),
-                                child: const Icon(Icons.remove, color: Colors.white, size: 16),
-                              ),
-                              Text(
-                                '$itemCount',
-                                style: const TextStyle(
+                              child: Container(
+                                decoration: BoxDecoration(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(color: const Color(0xFF4CAF50)),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'ADD',
+                                    style: TextStyle(
+                                      color: Color(0xFF4CAF50),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 11,
+                                    ),
+                                  ),
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: () => addToCart(item['name']),
-                                child: const Icon(Icons.add, color: Colors.white, size: 16),
+                            ),
+                          )
+                        : Material(
+                            color: Colors.transparent,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF4CAF50),
+                                borderRadius: BorderRadius.circular(6),
                               ),
-                            ],
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      print('REMOVE BUTTON TAPPED: ${item['name']}');
+                                      removeFromCart(item['name']);
+                                    },
+                                    child: const Icon(Icons.remove, color: Colors.white, size: 14),
+                                  ),
+                                  Text(
+                                    '$itemCount',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      print('ADD BUTTON TAPPED (counter): ${item['name']}');
+                                      addToCart(item['name']);
+                                    },
+                                    child: const Icon(Icons.add, color: Colors.white, size: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
+                  ),
                 ],
               ),
             ),

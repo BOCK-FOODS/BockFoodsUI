@@ -15,75 +15,84 @@ class CartScreen extends StatelessWidget {
     final isWeb = MediaQuery.of(context).size.width > 900;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F9FB),
-      appBar: AppBar(
-        title: const Text(
-          'Your Cart',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+    return WillPopScope(
+      onWillPop: () async {
+        // Prevents user from going back
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF7F9FB),
+        appBar: AppBar(
+          title: const Text(
+            'Your Cart',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.black),
         ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: Center(
-        child: Container(
-          width: isWeb ? screenWidth * 0.75 : screenWidth,
-          child: ListView(
-            padding: EdgeInsets.all(isWeb ? 24 : 16),
-            children: [
-              _buildSectionHeader(context, 'Your Cart', foodCart.items.length + instamartCart.items.length),
-              const SizedBox(height: 12),
-              if (foodCart.items.isEmpty && instamartCart.items.isEmpty)
-                _buildEmptyCartMessage('Your cart is empty')
-              else
-                ...[
-                  ...foodCart.items.values.map((ci) => _buildCartItem(
-                    context: context,
-                    name: ci.item.name,
-                    price: ci.item.price,
-                    quantity: ci.qty,
-                    onRemove: () => foodCart.removeSingle(ci.item.id),
-                    onAdd: () => foodCart.addItem(ci.item),
-                    isWeb: isWeb,
-                  )),
-                  ...instamartCart.items.values.map((ci) => _buildCartItem(
-                    context: context,
-                    name: ci.item.name,
-                    price: ci.item.price,
-                    quantity: ci.qty,
-                    onRemove: () => instamartCart.removeSingle(ci.item.id),
-                    onAdd: () => instamartCart.addItem(ci.item),
-                    isWeb: isWeb,
-                  )),
-                ],
+        body: Center(
+          child: Container(
+            width: isWeb ? screenWidth * 0.75 : screenWidth,
+            child: ListView(
+              padding: EdgeInsets.all(isWeb ? 24 : 16),
+              children: [
+                _buildSectionHeader(context, 'Your Cart',
+                    foodCart.items.length + instamartCart.items.length),
+                const SizedBox(height: 12),
+                if (foodCart.items.isEmpty && instamartCart.items.isEmpty)
+                  _buildEmptyCartMessage('Your cart is empty')
+                else
+                  ...[
+                    ...foodCart.items.values.map((ci) => _buildCartItem(
+                          context: context,
+                          name: ci.item.name,
+                          price: ci.item.price,
+                          quantity: ci.qty,
+                          onRemove: () => foodCart.removeSingle(ci.item.id),
+                          onAdd: () => foodCart.addItem(ci.item),
+                          isWeb: isWeb,
+                        )),
+                    ...instamartCart.items.values.map((ci) => _buildCartItem(
+                          context: context,
+                          name: ci.item.name,
+                          price: ci.item.price,
+                          quantity: ci.qty,
+                          onRemove: () =>
+                              instamartCart.removeSingle(ci.item.id),
+                          onAdd: () => instamartCart.addItem(ci.item),
+                          isWeb: isWeb,
+                        )),
+                  ],
 
-              const SizedBox(height: 32),
+                const SizedBox(height: 32),
 
-              // Bill Summary
-              _buildBillSummary(
-                context: context,
-                foodCart: foodCart,
-                instamartCart: instamartCart,
-                isWeb: isWeb,
-              ),
-            ],
+                // Bill Summary
+                _buildBillSummary(
+                  context: context,
+                  foodCart: foodCart,
+                  instamartCart: instamartCart,
+                  isWeb: isWeb,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title, int itemCount) {
+  Widget _buildSectionHeader(
+      BuildContext context, String title, int itemCount) {
     return Row(
       children: [
         Text(
           title,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
         ),
         const SizedBox(width: 8),
         Container(
@@ -121,7 +130,8 @@ class CartScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.shopping_bag_outlined, color: Colors.grey.shade400, size: 32),
+          Icon(Icons.shopping_bag_outlined,
+              color: Colors.grey.shade400, size: 32),
           const SizedBox(width: 16),
           Text(
             message,
@@ -161,7 +171,6 @@ class CartScreen extends StatelessWidget {
         padding: EdgeInsets.all(isWeb ? 16 : 12),
         child: Row(
           children: [
-            // Item Image/Icon
             Container(
               width: isWeb ? 70 : 60,
               height: isWeb ? 70 : 60,
@@ -181,8 +190,7 @@ class CartScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            
-            // Item Details
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,11 +215,11 @@ class CartScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
-            // Quantity Controls
+
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFF27A600), width: 1.5),
+                border:
+                    Border.all(color: const Color(0xFF27A600), width: 1.5),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -221,7 +229,8 @@ class CartScreen extends StatelessWidget {
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: onRemove,
-                      borderRadius: const BorderRadius.horizontal(left: Radius.circular(8)),
+                      borderRadius: const BorderRadius.horizontal(
+                          left: Radius.circular(8)),
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         child: const Icon(
@@ -233,7 +242,8 @@ class CartScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8),
                     child: Text(
                       '$quantity',
                       style: const TextStyle(
@@ -247,7 +257,8 @@ class CartScreen extends StatelessWidget {
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: onAdd,
-                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(8)),
+                      borderRadius: const BorderRadius.horizontal(
+                          right: Radius.circular(8)),
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         child: const Icon(
@@ -292,7 +303,6 @@ class CartScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Bill Details Header
           Container(
             padding: EdgeInsets.all(isWeb ? 20 : 16),
             decoration: BoxDecoration(
@@ -301,14 +311,14 @@ class CartScreen extends StatelessWidget {
               ),
             ),
             child: Row(
-              children: [
-                const Icon(
+              children: const [
+                Icon(
                   Icons.receipt_long_outlined,
                   color: Color(0xFF27A600),
                   size: 24,
                 ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Bill Details',
                   style: TextStyle(
                     fontSize: 18,
@@ -320,28 +330,34 @@ class CartScreen extends StatelessWidget {
             ),
           ),
 
-          // Bill Items
           Padding(
             padding: EdgeInsets.all(isWeb ? 20 : 16),
             child: Column(
               children: [
                 if (foodCart.subtotal > 0)
-                  _buildBillRow('Food Total', '₹${foodCart.subtotal.toStringAsFixed(0)}'),
+                  _buildBillRow('Food Total',
+                      '₹${foodCart.subtotal.toStringAsFixed(0)}'),
+
                 if (instamartCart.subtotal > 0) ...[
                   const SizedBox(height: 12),
-                  _buildBillRow('Instamart Total', '₹${instamartCart.subtotal.toStringAsFixed(0)}'),
+                  _buildBillRow(
+                      'Instamart Total',
+                      '₹${instamartCart.subtotal.toStringAsFixed(0)}'),
                 ],
+
                 const SizedBox(height: 12),
-                _buildBillRow('Delivery Fee', '₹${deliveryFee.toStringAsFixed(0)}'),
+                _buildBillRow(
+                    'Delivery Fee', '₹${deliveryFee.toStringAsFixed(0)}'),
                 const SizedBox(height: 12),
-                _buildBillRow('GST & Other Charges', '₹${gstCharges.toStringAsFixed(2)}'),
-                
+                _buildBillRow('GST & Other Charges',
+                    '₹${gstCharges.toStringAsFixed(2)}'),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Divider(color: Colors.grey.shade300, thickness: 1),
+                  child:
+                      Divider(color: Colors.grey.shade300, thickness: 1),
                 ),
-                
-                // Grand Total
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -366,27 +382,29 @@ class CartScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // Checkout Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF27A600),
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: isWeb ? 18 : 16),
+                      padding: EdgeInsets.symmetric(
+                          vertical: isWeb ? 18 : 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 0,
-                      shadowColor: const Color(0xFF27A600).withOpacity(0.3),
+                      shadowColor:
+                          const Color(0xFF27A600).withOpacity(0.3),
                     ),
                     onPressed: () {
-                      Navigator.of(context).pushNamed(CheckoutScreen.routeName);
+                      Navigator.of(context)
+                          .pushNamed(CheckoutScreen.routeName);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
+                      children: const [
+                        Text(
                           'Proceed to Place Order',
                           style: TextStyle(
                             fontSize: 16,
@@ -394,8 +412,8 @@ class CartScreen extends StatelessWidget {
                             letterSpacing: 0.5,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        const Icon(Icons.arrow_forward, size: 20),
+                        SizedBox(width: 8),
+                        Icon(Icons.arrow_forward, size: 20),
                       ],
                     ),
                   ),
@@ -403,7 +421,6 @@ class CartScreen extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
-                // Delivery Info
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(

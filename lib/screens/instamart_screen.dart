@@ -139,7 +139,9 @@ class _InstamartScreenState extends State<InstamartScreen> {
               radius: 16,
               child: Icon(Icons.person, size: 20, color: Colors.white),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed('/account');
+            },
           ),
         ],
       ),

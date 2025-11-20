@@ -9,6 +9,7 @@ class RestaurantDetailFinalScreen extends StatefulWidget {
 
   @override
   State<RestaurantDetailFinalScreen> createState() => _RestaurantDetailFinalScreenState();
+  
 }
 
 class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScreen> {

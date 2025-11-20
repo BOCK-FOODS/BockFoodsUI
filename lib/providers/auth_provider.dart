@@ -77,4 +77,6 @@ class AuthProvider extends ChangeNotifier {
     _userData = {};
     notifyListeners();
   }
+
+  void updateProfile({required String name, required String email, required String mobile, required String address}) {}
 }

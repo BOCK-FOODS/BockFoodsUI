@@ -111,9 +111,14 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
           ),
         ),
         actions: [
-          CircleAvatar(
-            backgroundColor: Colors.grey[300],
-            child: const Icon(Icons.person, color: Colors.grey),
+          IconButton(
+            icon: CircleAvatar(
+              backgroundColor: Colors.grey[300],
+              child: const Icon(Icons.person, color: Colors.grey),
+            ),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/account');
+            },
           ),
           const SizedBox(width: 16),
         ],

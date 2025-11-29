@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'restaurant_detail_final.dart';
 
+
 class AllRestaurantsScreen extends StatefulWidget {
   static const routeName = '/all-restaurants';
   const AllRestaurantsScreen({super.key});

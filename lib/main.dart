@@ -62,11 +62,13 @@ class _AppWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, _) {
-        if (authProvider.isLoggedIn) {
-          return const HomeScreen();
+        if (!authProvider.isLoggedIn) {
+          return const LoginSignupScreen();
         }
-        return const LoginSignupScreen();
+        return const HomeScreen();
+        
       },
     );
   }
 }
+

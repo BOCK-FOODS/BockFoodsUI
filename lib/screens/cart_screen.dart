@@ -4,9 +4,32 @@ import 'package:bock_foods/providers/cart_provider.dart';
 import 'package:bock_foods/providers/instamart_cart_provider.dart';
 import 'checkout_screen.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   static const routeName = '/cart';
   const CartScreen({super.key});
+
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  int _selectedTab = 0; // 0 for Food, 1 for Instamart
+  
+  @override
+  void initState() {
+    super.initState();
+    // Auto-select tab based on which cart has items
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final foodCart = Provider.of<FoodCartProvider>(context, listen: false);
+      final instamartCart = Provider.of<InstamartCartProvider>(context, listen: false);
+      
+      if (foodCart.items.isEmpty && instamartCart.items.isNotEmpty) {
+        setState(() {
+          _selectedTab = 1;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +40,12 @@ class CartScreen extends StatelessWidget {
 
     return WillPopScope(
       onWillPop: () async {
-        // Prevents user from going back
         return false;
       },
       child: Scaffold(
         backgroundColor: const Color(0xFFF7F9FB),
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: const Text(
             'Your Cart',
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
@@ -35,50 +58,215 @@ class CartScreen extends StatelessWidget {
         body: Center(
           child: Container(
             width: isWeb ? screenWidth * 0.75 : screenWidth,
-            child: ListView(
-              padding: EdgeInsets.all(isWeb ? 24 : 16),
+            child: Column(
               children: [
-                _buildSectionHeader(context, 'Your Cart',
-                    foodCart.items.length + instamartCart.items.length),
-                const SizedBox(height: 12),
-                if (foodCart.items.isEmpty && instamartCart.items.isEmpty)
-                  _buildEmptyCartMessage('Your cart is empty')
-                else
-                  ...[
-                    ...foodCart.items.values.map((ci) => _buildCartItem(
-                          context: context,
-                          name: ci.item.name,
-                          price: ci.item.price,
-                          quantity: ci.qty,
-                          onRemove: () => foodCart.removeSingle(ci.item.id),
-                          onAdd: () => foodCart.addItem(ci.item),
-                          isWeb: isWeb,
-                        )),
-                    ...instamartCart.items.values.map((ci) => _buildCartItem(
-                          context: context,
-                          name: ci.item.name,
-                          price: ci.item.price,
-                          quantity: ci.qty,
-                          onRemove: () =>
-                              instamartCart.removeSingle(ci.item.id),
-                          onAdd: () => instamartCart.addItem(ci.item),
-                          isWeb: isWeb,
-                        )),
-                  ],
+                // Toggle Button
+                _buildToggleButton(foodCart, instamartCart, isWeb),
+                
+                // Cart Content
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.all(isWeb ? 24 : 16),
+                    children: [
+                      _buildSectionHeader(
+                        context,
+                        _selectedTab == 0 ? 'Food Cart' : 'Instamart Cart',
+                        _selectedTab == 0
+                            ? foodCart.items.length
+                            : instamartCart.items.length,
+                      ),
+                      const SizedBox(height: 12),
+                      
+                      // Display cart items based on selected tab
+                      if (_selectedTab == 0) ...[
+                        if (foodCart.items.isEmpty)
+                          _buildEmptyCartMessage('Your food cart is empty')
+                        else
+                          ...foodCart.items.values.map((ci) => _buildCartItem(
+                                context: context,
+                                name: ci.item.name,
+                                price: ci.item.price,
+                                quantity: ci.qty,
+                                onRemove: () => foodCart.removeSingle(ci.item.id),
+                                onAdd: () => foodCart.addItem(ci.item),
+                                isWeb: isWeb,
+                              )),
+                      ] else ...[
+                        if (instamartCart.items.isEmpty)
+                          _buildEmptyCartMessage('Your Instamart cart is empty')
+                        else
+                          ...instamartCart.items.values.map((ci) => _buildCartItem(
+                                context: context,
+                                name: ci.item.name,
+                                price: ci.item.price,
+                                quantity: ci.qty,
+                                onRemove: () =>
+                                    instamartCart.removeSingle(ci.item.id),
+                                onAdd: () => instamartCart.addItem(ci.item),
+                                isWeb: isWeb,
+                              )),
+                      ],
 
-                const SizedBox(height: 32),
+                      const SizedBox(height: 32),
 
-                // Bill Summary
-                _buildBillSummary(
-                  context: context,
-                  foodCart: foodCart,
-                  instamartCart: instamartCart,
-                  isWeb: isWeb,
+                      // Bill Summary for selected cart
+                      _buildBillSummary(
+                        context: context,
+                        foodCart: foodCart,
+                        instamartCart: instamartCart,
+                        isWeb: isWeb,
+                        selectedTab: _selectedTab,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildToggleButton(FoodCartProvider foodCart,
+      InstamartCartProvider instamartCart, bool isWeb) {
+    return Container(
+      margin: EdgeInsets.all(isWeb ? 24 : 16),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedTab = 0;
+                });
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: isWeb ? 14 : 12, horizontal: 8),
+                decoration: BoxDecoration(
+                  color: _selectedTab == 0
+                      ? const Color(0xFF27A600)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.restaurant,
+                      color: _selectedTab == 0 ? Colors.white : Colors.grey,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Food',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: _selectedTab == 0 ? Colors.white : Colors.grey,
+                      ),
+                    ),
+                    if (foodCart.items.isNotEmpty) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: _selectedTab == 0
+                              ? Colors.white.withOpacity(0.3)
+                              : Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '${foodCart.items.length}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color:
+                                _selectedTab == 0 ? Colors.white : Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedTab = 1;
+                });
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: isWeb ? 14 : 12, horizontal: 8),
+                decoration: BoxDecoration(
+                  color: _selectedTab == 1
+                      ? const Color(0xFF27A600)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.shopping_bag,
+                      color: _selectedTab == 1 ? Colors.white : Colors.grey,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Instamart',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: _selectedTab == 1 ? Colors.white : Colors.grey,
+                      ),
+                    ),
+                    if (instamartCart.items.isNotEmpty) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: _selectedTab == 1
+                              ? Colors.white.withOpacity(0.3)
+                              : Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '${instamartCart.items.length}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color:
+                                _selectedTab == 1 ? Colors.white : Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -283,11 +471,18 @@ class CartScreen extends StatelessWidget {
     required FoodCartProvider foodCart,
     required InstamartCartProvider instamartCart,
     required bool isWeb,
+    required int selectedTab,
   }) {
-    final subtotal = foodCart.subtotal + instamartCart.subtotal;
+    // Calculate based on selected tab
+    final subtotal = selectedTab == 0 ? foodCart.subtotal : instamartCart.subtotal;
     final deliveryFee = 20.0;
     final gstCharges = (subtotal + deliveryFee) * 0.05;
     final grandTotal = subtotal + deliveryFee + gstCharges;
+
+    // Don't show bill summary if cart is empty
+    if (subtotal == 0) {
+      return const SizedBox.shrink();
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -334,17 +529,9 @@ class CartScreen extends StatelessWidget {
             padding: EdgeInsets.all(isWeb ? 20 : 16),
             child: Column(
               children: [
-                if (foodCart.subtotal > 0)
-                  _buildBillRow('Food Total',
-                      '₹${foodCart.subtotal.toStringAsFixed(0)}'),
-
-                if (instamartCart.subtotal > 0) ...[
-                  const SizedBox(height: 12),
-                  _buildBillRow(
-                      'Instamart Total',
-                      '₹${instamartCart.subtotal.toStringAsFixed(0)}'),
-                ],
-
+                _buildBillRow(
+                    selectedTab == 0 ? 'Food Total' : 'Instamart Total',
+                    '₹${subtotal.toStringAsFixed(0)}'),
                 const SizedBox(height: 12),
                 _buildBillRow(
                     'Delivery Fee', '₹${deliveryFee.toStringAsFixed(0)}'),
@@ -383,41 +570,46 @@ class CartScreen extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF27A600),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                          vertical: isWeb ? 18 : 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                      shadowColor:
-                          const Color(0xFF27A600).withOpacity(0.3),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context)
-                          .pushNamed(CheckoutScreen.routeName);
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text(
-                          'Proceed to Place Order',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Icon(Icons.arrow_forward, size: 20),
-                      ],
-                    ),
-                  ),
-                ),
+  width: double.infinity,
+  child: ElevatedButton(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF27A600),
+      foregroundColor: Colors.white,
+      padding: EdgeInsets.symmetric(
+          vertical: isWeb ? 18 : 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      elevation: 0,
+      shadowColor:
+          const Color(0xFF27A600).withOpacity(0.3),
+    ),
+    onPressed: () {
+      // Pass the selected order type to checkout screen
+      Navigator.of(context).pushNamed(
+        CheckoutScreen.routeName,
+        arguments: {
+          'orderType': selectedTab, // Pass which tab is currently selected (0 for Food, 1 for Instamart)
+        },
+      );
+    },
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Text(
+          'Proceed to Place Order',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
+        SizedBox(width: 8),
+        Icon(Icons.arrow_forward, size: 20),
+      ],
+    ),
+  ),
+),
 
                 const SizedBox(height: 12),
 

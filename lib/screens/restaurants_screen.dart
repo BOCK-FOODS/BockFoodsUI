@@ -12,9 +12,8 @@ class RestaurantsScreen extends StatefulWidget {
 
 class _RestaurantsScreenState extends State<RestaurantsScreen> {
   final TextEditingController _searchController = TextEditingController();
-  String _deliveryAddress = 'B- Block, flat No. 305, Malibu Rising City Apartment, Krish...';
-  // _selectedCategory removed (unused)
-  // Local cart items removed — adding to cart is disabled on this screen per UX
+  String _deliveryAddress = '';
+
 
   @override
   void dispose() {
@@ -85,7 +84,7 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                     const Row(
                       children: [
                         Text(
-                          'Home',
+                          'Address',
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,

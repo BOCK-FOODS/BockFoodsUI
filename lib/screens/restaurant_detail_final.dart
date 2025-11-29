@@ -9,11 +9,9 @@ class RestaurantDetailFinalScreen extends StatefulWidget {
 
   @override
   State<RestaurantDetailFinalScreen> createState() => _RestaurantDetailFinalScreenState();
-  
 }
 
 class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScreen> {
-  final Map<String, int> _localCartCount = {};
   final TextEditingController _searchController = TextEditingController();
   String _currentArea = '';
   List<Map<String, dynamic>> _menuItems = [];
@@ -22,6 +20,7 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
   final Map<String, List<Map<String, dynamic>>> _locationMenus = {
     'Koramangala': [
       {
+        'id': 'paneer_butter_masala',
         'name': 'Paneer Butter Masala',
         'price': 189,
         'originalPrice': 249,
@@ -29,8 +28,12 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
         'ratingCount': '2.3K+',
         'isBestseller': true,
         'isVeg': true,
+        'category': 'Main Course',
+        'description': 'Creamy paneer curry',
+        'imageUrl': '',
       },
       {
+        'id': 'dal_makhani',
         'name': 'Dal Makhani',
         'price': 149,
         'originalPrice': 199,
@@ -38,42 +41,62 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
         'ratingCount': '1.8K+',
         'isBestseller': true,
         'isVeg': true,
+        'category': 'Main Course',
+        'description': 'Rich lentil curry',
+        'imageUrl': '',
       },
       {
+        'id': 'veg_biryani',
         'name': 'Veg Biryani',
         'price': 179,
         'rating': 4.4,
         'ratingCount': '3.2K+',
         'isBestseller': true,
         'isVeg': true,
+        'category': 'Rice',
+        'description': 'Aromatic veg biryani',
+        'imageUrl': '',
       },
       {
+        'id': 'hakka_noodles',
         'name': 'Hakka Noodles',
         'price': 129,
         'rating': 4.3,
         'ratingCount': '1.5K+',
         'isBestseller': false,
         'isVeg': true,
+        'category': 'Chinese',
+        'description': 'Stir-fried noodles',
+        'imageUrl': '',
       },
       {
+        'id': 'gobi_manchurian',
         'name': 'Gobi Manchurian',
         'price': 139,
         'rating': 4.5,
         'ratingCount': '2.1K+',
         'isBestseller': true,
         'isVeg': true,
+        'category': 'Chinese',
+        'description': 'Crispy cauliflower',
+        'imageUrl': '',
       },
       {
+        'id': 'veg_fried_rice',
         'name': 'Veg Fried Rice',
         'price': 119,
         'rating': 4.2,
         'ratingCount': '1.2K+',
         'isBestseller': false,
         'isVeg': true,
+        'category': 'Rice',
+        'description': 'Chinese fried rice',
+        'imageUrl': '',
       },
     ],
     'Indiranagar': [
       {
+        'id': 'margherita_pizza',
         'name': 'Margherita Pizza',
         'price': 249,
         'originalPrice': 349,
@@ -81,8 +104,12 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
         'ratingCount': '4.5K+',
         'isBestseller': true,
         'isVeg': true,
+        'category': 'Pizza',
+        'description': 'Classic cheese pizza',
+        'imageUrl': '',
       },
       {
+        'id': 'pasta_alfredo',
         'name': 'Pasta Alfredo',
         'price': 199,
         'originalPrice': 279,
@@ -90,258 +117,86 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
         'ratingCount': '3.8K+',
         'isBestseller': true,
         'isVeg': true,
+        'category': 'Pasta',
+        'description': 'Creamy white sauce pasta',
+        'imageUrl': '',
       },
       {
+        'id': 'veg_lasagna',
         'name': 'Veg Lasagna',
         'price': 229,
         'rating': 4.5,
         'ratingCount': '2.9K+',
         'isBestseller': true,
         'isVeg': true,
+        'category': 'Pasta',
+        'description': 'Layered pasta delight',
+        'imageUrl': '',
       },
       {
+        'id': 'greek_salad',
         'name': 'Greek Salad',
         'price': 159,
         'rating': 4.4,
         'ratingCount': '1.8K+',
         'isBestseller': false,
         'isVeg': true,
+        'category': 'Salad',
+        'description': 'Fresh Mediterranean salad',
+        'imageUrl': '',
       },
       {
+        'id': 'garlic_bread',
         'name': 'Garlic Bread',
         'price': 99,
         'rating': 4.3,
         'ratingCount': '2.5K+',
         'isBestseller': false,
         'isVeg': true,
+        'category': 'Sides',
+        'description': 'Toasted garlic bread',
+        'imageUrl': '',
       },
       {
+        'id': 'bruschetta',
         'name': 'Bruschetta',
         'price': 129,
         'rating': 4.4,
         'ratingCount': '1.6K+',
         'isBestseller': false,
         'isVeg': true,
+        'category': 'Sides',
+        'description': 'Italian appetizer',
+        'imageUrl': '',
       },
     ],
-    'Whitefield': [
-      {
-        'name': 'Paneer Paratha',
-        'price': 129,
-        'originalPrice': 179,
-        'rating': 4.5,
-        'ratingCount': '3.4K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-      {
-        'name': 'Chole Bhature',
-        'price': 139,
-        'originalPrice': 189,
-        'rating': 4.6,
-        'ratingCount': '4.2K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-      {
-        'name': 'Rajma Chawal',
-        'price': 149,
-        'rating': 4.4,
-        'ratingCount': '2.8K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-      {
-        'name': 'Aloo Gobi',
-        'price': 119,
-        'rating': 4.3,
-        'ratingCount': '1.9K+',
-        'isBestseller': false,
-        'isVeg': true,
-      },
-      {
-        'name': 'Mixed Veg Curry',
-        'price': 129,
-        'rating': 4.4,
-        'ratingCount': '2.3K+',
-        'isBestseller': false,
-        'isVeg': true,
-      },
-      {
-        'name': 'Kadai Paneer',
-        'price': 169,
-        'rating': 4.5,
-        'ratingCount': '3.1K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-    ],
-    'HSR Layout': [
-      {
-        'name': 'Idli [4 Nos]',
-        'price': 69,
-        'originalPrice': 99,
-        'rating': 4.6,
-        'ratingCount': '5.2K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-      {
-        'name': 'Masala Dosa',
-        'price': 89,
-        'originalPrice': 119,
-        'rating': 4.7,
-        'ratingCount': '6.8K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-      {
-        'name': 'Medhu Vada [2 Nos]',
-        'price': 59,
-        'rating': 4.5,
-        'ratingCount': '4.1K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-      {
-        'name': 'Pongal',
-        'price': 79,
-        'rating': 4.4,
-        'ratingCount': '3.5K+',
-        'isBestseller': false,
-        'isVeg': true,
-      },
-      {
-        'name': 'Rava Dosa',
-        'price': 99,
-        'rating': 4.6,
-        'ratingCount': '4.8K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-      {
-        'name': 'Filter Coffee',
-        'price': 39,
-        'rating': 4.7,
-        'ratingCount': '7.2K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-    ],
-    'BTM Layout': [
-      {
-        'name': 'Veg Biryani [Full]',
-        'price': 199,
-        'originalPrice': 279,
-        'rating': 4.5,
-        'ratingCount': '3.9K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-      {
-        'name': 'Paneer Biryani',
-        'price': 229,
-        'originalPrice': 299,
-        'rating': 4.6,
-        'ratingCount': '4.5K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-      {
-        'name': 'Mushroom Biryani',
-        'price': 209,
-        'rating': 4.4,
-        'ratingCount': '2.7K+',
-        'isBestseller': true,
-        'isVeg': true,
-      },
-      {
-        'name': 'Raita Bowl',
-        'price': 49,
-        'rating': 4.3,
-        'ratingCount': '1.8K+',
-        'isBestseller': false,
-        'isVeg': true,
-      },
-      {
-        'name': 'Veg Curry',
-        'price': 89,
-        'rating': 4.4,
-        'ratingCount': '2.1K+',
-        'isBestseller': false,
-        'isVeg': true,
-      },
-      {
-        'name': 'Jeera Rice',
-        'price': 79,
-        'rating': 4.2,
-        'ratingCount': '1.5K+',
-        'isBestseller': false,
-        'isVeg': true,
-      },
-    ],
+    // Add other locations with IDs similarly...
   };
 
-  int get _totalItems {
-    return _localCartCount.values.fold(0, (sum, count) => sum + count);
+  // Helper function to get cart count from provider
+  int getItemCount(BuildContext context, String itemId) {
+    final cart = Provider.of<FoodCartProvider>(context);
+    return cart.items[itemId]?.qty ?? 0;
   }
 
-  double get _totalPrice {
-    final foodCart = Provider.of<FoodCartProvider>(context, listen: false);
-    return foodCart.subtotal;
-  }
-
-  void addToCart(String itemName) {
-    try {
-      print('=== ADD TO CART DEBUG ===');
-      print('Item Name: "$itemName"');
-      print('Menu Items Count: ${_menuItems.length}');
-      print('Menu Items: ${_menuItems.map((e) => e['name']).toList()}');
-      
-      final foodCart = Provider.of<FoodCartProvider>(context, listen: false);
-      final item = _menuItems.firstWhere((item) => item['name'] == itemName);
-      
-      print('Found item: ${item['name']}');
-      
-      final foodItem = FoodItem(
-        id: item['id'] ?? itemName,
-        name: item['name'],
-        price: (item['price'] as num).toDouble(),
-        description: item['description'] ?? '',
-        imageUrl: item['imageUrl'] ?? '',
-        category: item['category'] ?? '',
-        isVeg: item['isVeg'] ?? true,
-      );
-      
-      print('Creating FoodItem: ${foodItem.name}');
-      
-      setState(() {
-        foodCart.addItem(foodItem);
-        _localCartCount[itemName] = (_localCartCount[itemName] ?? 0) + 1;
-        print('Local cart count updated: ${_localCartCount[itemName]}');
-      });
-      
-      print('=== ADD TO CART SUCCESS ===');
-    } catch (e) {
-      print('=== ERROR ADDING TO CART ===');
-      print('Error: $e');
-      print('Stack trace: ${StackTrace.current}');
-    }
-  }
-
-  void removeFromCart(String itemName) {
-    final foodCart = Provider.of<FoodCartProvider>(context, listen: false);
-    final item = _menuItems.firstWhere((item) => item['name'] == itemName);
+  void addToCart(String itemId) {
+    final item = _menuItems.firstWhere((item) => item['id'] == itemId);
     
-    setState(() {
-      if (_localCartCount[itemName] != null && _localCartCount[itemName]! > 0) {
-        foodCart.removeItem(item['id'] ?? itemName);
-        _localCartCount[itemName] = _localCartCount[itemName]! - 1;
-        if (_localCartCount[itemName] == 0) {
-          _localCartCount.remove(itemName);
-        }
-      }
-    });
+    final foodItem = FoodItem(
+      id: item['id'],
+      name: item['name'],
+      price: (item['price'] as num).toDouble(),
+      description: item['description'] ?? '',
+      imageUrl: item['imageUrl'] ?? '',
+      category: item['category'] ?? '',
+      isVeg: item['isVeg'] ?? true,
+    );
+    
+    Provider.of<FoodCartProvider>(context, listen: false).addItem(foodItem);
+  }
+
+  void removeFromCart(String itemId) {
+    Provider.of<FoodCartProvider>(context, listen: false).removeSingle(itemId);
   }
 
   @override
@@ -352,10 +207,13 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
     final area = args['area'] ?? 'Koramangala';
     
     // Set menu items based on area
-      if (_currentArea != area) {
-  _currentArea = area;
-  _menuItems = _locationMenus[area] ?? _locationMenus['Koramangala']!;
-    }    final isWeb = MediaQuery.of(context).size.width > 600;
+    if (_currentArea != area) {
+      _currentArea = area;
+      _menuItems = _locationMenus[area] ?? _locationMenus['Koramangala']!;
+    }
+    // bottom cart bar removed; no local cart summary needed here
+    
+    final isWeb = MediaQuery.of(context).size.width > 600;
     final screenWidth = MediaQuery.of(context).size.width;
     final contentWidth = isWeb ? screenWidth * 0.75 : screenWidth;
 
@@ -667,62 +525,17 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
                     ),
                   ),
                   
-                  const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 100)),
                 ],
               ),
             ),
           ),
-          
         ],
       ),
-      // Cart Bottom Bar using bottomNavigationBar
-      bottomNavigationBar: _totalItems > 0
-          ? Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF4CAF50),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, -5),
-                  ),
-                ],
-              ),
-              child: SafeArea(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '$_totalItems Item${_totalItems > 1 ? 's' : ''}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '₹${_totalPrice.toStringAsFixed(0)}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : null,
+      // Cart Bottom Bar removed per request
+      bottomNavigationBar: null,
     );
   }
-
-  // Cart dialog removed — navigation now goes to a unified CartScreen
 
   Widget _buildFilterChip(String label, IconData? icon, bool selected) {
     return Container(
@@ -754,235 +567,232 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
   }
 
   Widget _buildMenuItem(Map<String, dynamic> item) {
-    final itemCount = _localCartCount[item['name']] ?? 0;
+    final itemId = item['id'];
     
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
+    return Consumer<FoodCartProvider>(
+      builder: (context, cart, child) {
+        final itemCount = getItemCount(context, itemId);
+        
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[200]!),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 4,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image
-          Expanded(
-            flex: 3,
-            child: Stack(
-              children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                  ),
-                  child: const Icon(Icons.fastfood, size: 50, color: Colors.grey),
-                ),
-                if (item['isBestseller'])
-                  Positioned(
-                    top: 6,
-                    left: 6,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image
+              Expanded(
+                flex: 3,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF4CAF50),
-                        borderRadius: BorderRadius.circular(4),
+                        color: Colors.grey[100],
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                       ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.star, size: 10, color: Colors.white),
-                          SizedBox(width: 3),
-                          Text(
-                            'Bestseller',
-                            style: TextStyle(
-                              fontSize: 9,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: const Icon(Icons.fastfood, size: 50, color: Colors.grey),
                     ),
-                  ),
-                if (item['isVeg'])
-                  Positioned(
-                    top: 6,
-                    right: 6,
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: const Color(0xFF4CAF50), width: 2),
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                      child: Center(
+                    if (item['isBestseller'])
+                      Positioned(
+                        top: 6,
+                        left: 6,
                         child: Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF4CAF50),
-                            shape: BoxShape.circle,
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF4CAF50),
+                            borderRadius: BorderRadius.circular(4),
                           ),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          
-          // Details
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          item['name'],
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            if (item['originalPrice'] != null) ...[
+                          child: const Row(
+                            children: [
+                              Icon(Icons.star, size: 10, color: Colors.white),
+                              SizedBox(width: 3),
                               Text(
-                                '₹${item['originalPrice']}',
-                                style: const TextStyle(
+                                'Bestseller',
+                                style: TextStyle(
                                   fontSize: 9,
-                                  color: Colors.grey,
-                                  decoration: TextDecoration.lineThrough,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
-                              const SizedBox(width: 3),
                             ],
+                          ),
+                        ),
+                      ),
+                    if (item['isVeg'])
+                      Positioned(
+                        top: 6,
+                        right: 6,
+                        child: Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: const Color(0xFF4CAF50), width: 2),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          child: Center(
+                            child: Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF4CAF50),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              
+              // Details
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
                             Text(
-                              '₹${item['price']}',
+                              item['name'],
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF4CAF50),
                               ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            const Icon(Icons.star, size: 10, color: Color(0xFF4CAF50)),
-                            const SizedBox(width: 2),
-                            Flexible(
-                              child: Text(
-                                '${item['rating']} (${item['ratingCount']})',
-                                style: const TextStyle(
-                                  fontSize: 8,
-                                  color: Colors.grey,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  // Add Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: itemCount == 0 ? 28 : 26,
-                    child: itemCount == 0
-                        ? Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () {
-                                print('ADD BUTTON TAPPED: ${item['name']}');
-                                addToCart(item['name']);
-                              },
-                              borderRadius: BorderRadius.circular(6),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(color: const Color(0xFF4CAF50)),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    'ADD',
-                                    style: TextStyle(
-                                      color: Color(0xFF4CAF50),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Material(
-                            color: Colors.transparent,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF4CAF50),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      print('REMOVE BUTTON TAPPED: ${item['name']}');
-                                      removeFromCart(item['name']);
-                                    },
-                                    child: const Icon(Icons.remove, color: Colors.white, size: 14),
-                                  ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                if (item['originalPrice'] != null) ...[
                                   Text(
-                                    '$itemCount',
+                                    '₹${item['originalPrice']}',
                                     style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                      fontSize: 9,
+                                      color: Colors.grey,
+                                      decoration: TextDecoration.lineThrough,
                                     ),
                                   ),
-                                  InkWell(
-                                    onTap: () {
-                                      print('ADD BUTTON TAPPED (counter): ${item['name']}');
-                                      addToCart(item['name']);
-                                    },
-                                    child: const Icon(Icons.add, color: Colors.white, size: 14),
-                                  ),
+                                  const SizedBox(width: 3),
                                 ],
-                              ),
+                                Text(
+                                  '₹${item['price']}',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF4CAF50),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                const Icon(Icons.star, size: 10, color: Color(0xFF4CAF50)),
+                                const SizedBox(width: 2),
+                                Flexible(
+                                  child: Text(
+                                    '${item['rating']} (${item['ratingCount']})',
+                                    style: const TextStyle(
+                                      fontSize: 8,
+                                      color: Colors.grey,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Add Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: itemCount == 0 ? 28 : 26,
+                        child: itemCount == 0
+                            ? Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () => addToCart(itemId),
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(color: const Color(0xFF4CAF50)),
+                                    ),
+                                    child: const Center(
+                                      child: Text(
+                                        'ADD',
+                                        style: TextStyle(
+                                          color: Color(0xFF4CAF50),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Material(
+                                color: Colors.transparent,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF4CAF50),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      InkWell(
+                                        onTap: () => removeFromCart(itemId),
+                                        child: const Icon(Icons.remove, color: Colors.white, size: 14),
+                                      ),
+                                      Text(
+                                        '$itemCount',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () => addToCart(itemId),
+                                        child: const Icon(Icons.add, color: Colors.white, size: 14),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

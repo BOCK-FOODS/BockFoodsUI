@@ -301,152 +301,145 @@ class _GroceryCategoryScreenState extends State<GroceryCategoryScreen> {
   }
 
   Widget _buildProductCard(Map<String, dynamic> item) {
-    final itemName = item['name'];
-    
-    return Consumer<InstamartCartProvider>(
-      builder: (context, cart, child) {
-        final itemCount = getItemCount(context, itemName);
-        
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey[200]!),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
-                spreadRadius: 1,
-                blurRadius: 4,
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Product Image
-              Expanded(
-                flex: 3,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: widget.categoryColor.withOpacity(0.05),
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+  final itemName = item['name'];
+  
+  return Consumer<InstamartCartProvider>(
+    builder: (context, cart, child) {
+      final itemCount = getItemCount(context, itemName);
+      
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[200]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 4,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Product Image
+            Expanded(
+              flex: 3,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: widget.categoryColor.withOpacity(0.05),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                ),
+                child: Center(
+                  child: Icon(
+                    item['image'] as IconData,
+                    size: 70,
+                    color: widget.categoryColor.withOpacity(0.6),
                   ),
-                  child: Center(
-                    child: Icon(
-                      item['image'] as IconData,
-                      size: 70,
-                      color: widget.categoryColor.withOpacity(0.6),
+                ),
+              ),
+            ),
+            // Product Details - Changed from Expanded to Padding
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    itemName,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    item['unit'],
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey[600],
                     ),
                   ),
-                ),
-              ),
-              // Product Details
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            itemName,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            item['unit'],
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '₹${item['price']}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Add Button or Counter
-                      itemCount == 0
-                          ? GestureDetector(
-                              onTap: () => addToCart(itemName),
-                              child: Container(
-                                height: 34,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.green, width: 2),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    'ADD',
-                                    style: TextStyle(
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(
-                              height: 34,
-                              decoration: BoxDecoration(
-                                color: Colors.green,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () => removeFromCart(itemName),
-                                    child: const Icon(
-                                      Icons.remove,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                  ),
-                                  Text(
-                                    '$itemCount',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () => addToCart(itemName),
-                                    child: const Icon(
-                                      Icons.add,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                    ],
+                  const SizedBox(height: 4),
+                  Text(
+                    '₹${item['price']}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  // Add Button or Counter
+                  itemCount == 0
+                      ? GestureDetector(
+                          onTap: () => addToCart(itemName),
+                          child: Container(
+                            height: 34,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.green, width: 2),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'ADD',
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              GestureDetector(
+                                onTap: () => removeFromCart(itemName),
+                                child: const Icon(
+                                  Icons.remove,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ),
+                              Text(
+                                '$itemCount',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => addToCart(itemName),
+                                child: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                ],
               ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 }

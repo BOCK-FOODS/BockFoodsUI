@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/instamart_cart_provider.dart';
 import '../models/food_item.dart';
 import 'grocery_category_screen.dart';
+import '../widgets/bottom_cart_slider.dart';
 
 class InstamartScreen extends StatefulWidget {
   static const routeName = '/instamart';
@@ -105,153 +106,241 @@ class _InstamartScreenState extends State<InstamartScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final isWeb = MediaQuery.of(context).size.width > 900;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final cart = Provider.of<InstamartCartProvider>(context);
-    
-    // ADDING WILLPOPSCOPE WRAPPER
-    return WillPopScope(
-      onWillPop: () async {
-        // Disable back button from leaving instamart screen
-        return false;
-      },
-      child: Scaffold(
-        backgroundColor: Colors.grey[50],
-        appBar: AppBar(
-  automaticallyImplyLeading: false, // Add this line to remove back arrow
-  backgroundColor: Colors.white,
-  elevation: 0,
-  toolbarHeight: 70,
-  title: GestureDetector(
-    onTap: _showAddressDialog,
-    child: Row(
-      children: [
-        const Icon(Icons.home, color: Color(0xFF27A600), size: 24),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+Widget build(BuildContext context) {
+  final isWeb = MediaQuery.of(context).size.width > 900;
+  final screenWidth = MediaQuery.of(context).size.width;
+  final cart = Provider.of<InstamartCartProvider>(context);
+  
+  // ADDING WILLPOPSCOPE WRAPPER
+  return WillPopScope(
+    onWillPop: () async {
+      // Disable back button from leaving instamart screen
+      return false;
+    },
+    child: Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        toolbarHeight: 70,
+        title: GestureDetector(
+          onTap: _showAddressDialog,
+          child: Row(
             children: [
-              const Row(
-                children: [
-                  Text(
-                    'Address',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+              const Icon(Icons.home, color: Color(0xFF27A600), size: 24),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        Text(
+                          'Address',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Icon(Icons.keyboard_arrow_down, color: Colors.black, size: 20),
+                      ],
                     ),
-                  ),
-                  Icon(Icons.keyboard_arrow_down, color: Colors.black, size: 20),
-                ],
-              ),
-              Text(
-                _deliveryAddress.isEmpty ? '' : _deliveryAddress,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 11,
+                    Text(
+                      _deliveryAddress.isEmpty ? '' : _deliveryAddress,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 11,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ],
                 ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
               ),
             ],
           ),
         ),
-      ],
-    ),
-  ),
-  actions: [
-    IconButton(
-      icon: const CircleAvatar(
-        backgroundColor: Colors.grey,
-        radius: 16,
-        child: Icon(Icons.person, size: 20, color: Colors.white),
+        actions: [
+          IconButton(
+            icon: const CircleAvatar(
+              backgroundColor: Colors.grey,
+              radius: 16,
+              child: Icon(Icons.person, size: 20, color: Colors.white),
+            ),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/account');
+            },
+          ),
+        ],
       ),
-      onPressed: () {
-        Navigator.of(context).pushNamed('/account');
-      },
-    ),
-  ],
-),
-        body: ListView(
-          children: [
-            // Search Bar
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(
-                horizontal: isWeb ? screenWidth * 0.125 : 16,
-                vertical: 16,
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
+      body: Stack(
+        children: [
+          ListView(
+            children: [
+              // Search Bar
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isWeb ? screenWidth * 0.125 : 16,
+                  vertical: 16,
                 ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search for "Perfume"',
-                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search for "Perfume"',
+                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 8),
+              const SizedBox(height: 8),
 
-            // Winter Prep Sale Banner
-            Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: isWeb ? screenWidth * 0.125 : 16,
-                vertical: 8,
-              ),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color.fromARGB(255, 49, 163, 36), Color.fromARGB(255, 59, 244, 31)],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+              // Winter Prep Sale Banner
+              Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: isWeb ? screenWidth * 0.125 : 16,
+                  vertical: 8,
                 ),
-                borderRadius: BorderRadius.circular(12),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color.fromARGB(255, 49, 163, 36), Color.fromARGB(255, 59, 244, 31)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.asset(
+                            'assets/winter_bottle.png',
+                            width: 60,
+                            height: 60,
+                            errorBuilder: (context, error, stackTrace) => 
+                              const Icon(Icons.local_drink, size: 60, color: Colors.white),
+                          ),
+                          const SizedBox(width: 8),
+                          const Expanded(
+                            child: Text(
+                              'WINTER\nPREP SALE',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Row(
+                              children: [
+                                SizedBox(width: 4),
+                                Text(
+                                  'Save\nMore',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+              // Daily Deal Drop Section
+              Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: isWeb ? screenWidth * 0.125 : 16,
+                  vertical: 8,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        Image.asset(
-                          'assets/winter_bottle.png',
-                          width: 60,
-                          height: 60,
-                          errorBuilder: (context, error, stackTrace) => 
-                            const Icon(Icons.local_drink, size: 60, color: Colors.white),
-                        ),
-                        const SizedBox(width: 8),
-                        const Expanded(
-                          child: Text(
-                            'WINTER\nPREP SALE',
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            'DAILY\nDEAL\nDROP',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 24,
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
+                              height: 1.2,
                             ),
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                _buildDealCard('Prep for\nWinter', 'UP TO 20% OFF', Colors.green),
+                                _buildDealCard('Free Delivery', 'On Min Order Value', Colors.green),
+                                _buildDealCard('Seasonal Fruits\n& Veggies', 'STARTS AT ₹29', Colors.green),
+                              ],
+                            ),
                           ),
-                          child: const Row(
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Free Cash Promotion
+              Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: isWeb ? screenWidth * 0.125 : 16,
+                ),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.green[200]!),
+                ),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              
+                              Icon(Icons.access_time, size: 16, color: Colors.green),
                               SizedBox(width: 4),
                               Text(
-                                'Save\nMore',
+                                'EXPIRES IN 7 Hours',
                                 style: TextStyle(
                                   color: Colors.green,
                                   fontWeight: FontWeight.bold,
@@ -260,262 +349,184 @@ class _InstamartScreenState extends State<InstamartScreen> {
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Daily Deal Drop Section
-            Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: isWeb ? screenWidth * 0.125 : 16,
-                vertical: 8,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          'DAILY\nDEAL\nDROP',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            height: 1.2,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              _buildDealCard('Prep for\nWinter', 'UP TO 20% OFF', Colors.green),
-                              _buildDealCard('Free Delivery', 'On Min Order Value', Colors.green),
-                              _buildDealCard('Seasonal Fruits\n& Veggies', 'STARTS AT ₹29', Colors.green),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Free Cash Promotion
-            Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: isWeb ? screenWidth * 0.125 : 16,
-              ),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.blue[50],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.green[200]!),
-              ),
-              child: Row(
-                children: [
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.access_time, size: 16, color: Colors.green),
-                            SizedBox(width: 4),
-                            Text(
-                              'EXPIRES IN 7 Hours',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Claim your ₹75 FREE cash now!',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Claim your ₹75 FREE cash now!',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
                           ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'On your order above ₹399. T&C applied',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
+                          SizedBox(height: 4),
+                          Text(
+                            'On your order above ₹399. T&C applied',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Image.asset(
-                    'assets/gift_box.png',
-                    width: 50,
-                    height: 50,
-                    errorBuilder: (context, error, stackTrace) => 
-                      const Icon(Icons.card_giftcard, size: 50, color: Colors.red),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Hot Deals Section
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: isWeb ? screenWidth * 0.125 : 16,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Hot deals',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                    Image.asset(
+                      'assets/gift_box.png',
+                      width: 50,
+                      height: 50,
+                      errorBuilder: (context, error, stackTrace) => 
+                        const Icon(Icons.card_giftcard, size: 50, color: Colors.red),
                     ),
-                  ),
-                  
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            // Hot Deals Grid with Grocery Items
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: isWeb ? screenWidth * 0.125 : 16,
+              const SizedBox(height: 16),
+
+              // Hot Deals Section
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isWeb ? screenWidth * 0.125 : 16,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Hot deals',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  int crossAxisCount;
-                  if (isWeb) {
-                    crossAxisCount = 4;
-                  } else {
-                    crossAxisCount = 2;
-                  }
-                  
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      childAspectRatio: isWeb ? 0.85 : 0.7,
+
+              // Hot Deals Grid with Grocery Items
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isWeb ? screenWidth * 0.125 : 16,
+                ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    int crossAxisCount;
+                    if (isWeb) {
+                      crossAxisCount = 4;
+                    } else {
+                      crossAxisCount = 2;
+                    }
+                    
+                    return GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        childAspectRatio: isWeb ? 0.85 : 0.7,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                      ),
+                      itemCount: groceryItems.length,
+                      itemBuilder: (context, index) {
+                        return _buildGroceryCard(groceryItems[index]);
+                      },
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Free Delivery Banner
+              Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: isWeb ? screenWidth * 0.125 : 16,
+                  vertical: 8,
+                ),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green[50],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.check, color: Colors.white),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'Hooray! FREE DELIVERY unlocked',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Grocery & Kitchen Categories
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isWeb ? screenWidth * 0.125 : 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Grocery & Kitchen',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: isWeb ? 6 : 3,
+                      childAspectRatio: 0.85,
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
+                      children: [
+                        _buildCategoryCard('Fresh\nVegetables', Icons.eco, Colors.green),
+                        _buildCategoryCard('Fresh Fruits', Icons.local_florist, Colors.orange),
+                        _buildCategoryCard('Dairy and Bread\n', Icons.egg, Colors.blue),
+                        _buildCategoryCard('Breakfast', Icons.breakfast_dining, Colors.amber),
+                        _buildCategoryCard('Atta, Rice and\nDal', Icons.grain, Colors.brown),
+                        _buildCategoryCard('Oils and Ghee', Icons.water_drop, Colors.yellow),
+                        _buildCategoryCard('Masalas', Icons.restaurant, Colors.red),
+                        _buildCategoryCard('Dry Fruits and\nSeeds Mix', Icons.food_bank, Colors.purple),
+                        _buildCategoryCard('Biscuits and\nCakes', Icons.cookie, Colors.pink),
+                        _buildCategoryCard('Tea, Coffee and\nMilk drinks', Icons.coffee, Colors.brown),
+                        _buildCategoryCard('Sauces and\nSpreads', Icons.local_pizza, Colors.red),
+                        _buildCategoryCard('Juices and\nBeverages', Icons.local_drink, Colors.red[900]!),
+                      ],
                     ),
-                    itemCount: groceryItems.length,
-                    itemBuilder: (context, index) {
-                      return _buildGroceryCard(groceryItems[index]);
-                    },
-                  );
-                },
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 16),
-
-            // Free Delivery Banner
-            Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: isWeb ? screenWidth * 0.125 : 16,
-                vertical: 8,
-              ),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.green[50],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      color: Colors.green,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.check, color: Colors.white),
-                  ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    'Hooray! FREE DELIVERY unlocked',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Grocery & Kitchen Categories
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: isWeb ? screenWidth * 0.125 : 16,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Grocery & Kitchen',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: isWeb ? 6 : 3,
-                    childAspectRatio: 0.85,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    children: [
-                      _buildCategoryCard('Fresh\nVegetables', Icons.eco, Colors.green),
-                      _buildCategoryCard('Fresh Fruits', Icons.local_florist, Colors.orange),
-                      _buildCategoryCard('Dairy and Bread\n', Icons.egg, Colors.blue),
-                      _buildCategoryCard('Breakfast', Icons.breakfast_dining, Colors.amber),
-                      _buildCategoryCard('Atta, Rice and\nDal', Icons.grain, Colors.brown),
-                      _buildCategoryCard('Oils and Ghee', Icons.water_drop, Colors.yellow),
-                      _buildCategoryCard('Masalas', Icons.restaurant, Colors.red),
-                      _buildCategoryCard('Dry Fruits and\nSeeds Mix', Icons.food_bank, Colors.purple),
-                      _buildCategoryCard('Biscuits and\nCakes', Icons.cookie, Colors.pink),
-                      _buildCategoryCard('Tea, Coffee and\nMilk drinks', Icons.coffee, Colors.brown),
-                      _buildCategoryCard('Sauces and\nSpreads', Icons.local_pizza, Colors.red),
-                      _buildCategoryCard('Juices and\nBeverages', Icons.local_drink, Colors.red[900]!),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 32),
-          ],
-        ),
+              const SizedBox(height: 120), // Extra padding for bottom cart slider
+            ],
+          ),
+          
+          // Bottom Cart Slider
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: BottomCartSlider(cartType: 'instamart'),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildGroceryCard(Map<String, dynamic> item) {
     final itemName = item['name'];

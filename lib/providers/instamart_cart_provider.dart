@@ -17,6 +17,11 @@ class InstamartCartProvider extends ChangeNotifier {
 
   double get subtotal => _items.values.fold(0.0, (t, e) => t + e.item.price * e.qty);
 
+  // Add these getters for BottomCartSlider compatibility
+  int get itemCount => totalItems;
+
+  double get totalAmount => subtotal;
+
   void addItem(FoodItem item) {
     if (_items.containsKey(item.id)) {
       _items[item.id]!.qty += 1;

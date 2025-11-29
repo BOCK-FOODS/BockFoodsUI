@@ -8,6 +8,16 @@ import 'instamart_screen.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  // Add this static method to switch tabs from anywhere
+  static void switchToCart(BuildContext context) {
+    final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+    if (homeState != null) {
+      homeState.setState(() {
+        homeState._selectedIndex = 3; // Switch to cart tab (index 3)
+      });
+    }
+  }
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }

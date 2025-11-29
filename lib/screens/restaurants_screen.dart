@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../models/food_item.dart';
 import 'restaurant_detail_final.dart';
+import '../widgets/bottom_cart_slider.dart';
 
 class RestaurantsScreen extends StatefulWidget {
   static const routeName = '/restaurants';
@@ -85,544 +86,556 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final isWeb = MediaQuery.of(context).size.width > 900;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final contentWidth = isWeb ? screenWidth * 0.75 : screenWidth;
-    
-    return Scaffold(
+Widget build(BuildContext context) {
+  final isWeb = MediaQuery.of(context).size.width > 900;
+  final screenWidth = MediaQuery.of(context).size.width;
+  final contentWidth = isWeb ? screenWidth * 0.75 : screenWidth;
+  
+  return Scaffold(
+    backgroundColor: Colors.white,
+    appBar: AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: Colors.white,
-      appBar: AppBar(
-  automaticallyImplyLeading: false, // Add this line to remove back arrow
-  backgroundColor: Colors.white,
-  elevation: 0,
-  title: GestureDetector(
-    onTap: _showAddressDialog,
-    child: Row(
-      children: [
-        const Icon(Icons.home, color: Color(0xFF4CAF50), size: 24),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
+      elevation: 0,
+      title: GestureDetector(
+        onTap: _showAddressDialog,
+        child: Row(
+          children: [
+            const Icon(Icons.home, color: Color(0xFF4CAF50), size: 24),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Address',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Icon(Icons.keyboard_arrow_down, color: Colors.black, size: 20),
-                ],
-              ),
-              Text(
-                _deliveryAddress,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 11,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  ),
-  actions: [
-    IconButton(
-      icon: CircleAvatar(
-        backgroundColor: Colors.grey[300],
-        child: const Icon(Icons.person, color: Colors.grey),
-      ),
-      onPressed: () {
-        Navigator.of(context).pushNamed('/account');
-      },
-    ),
-    const SizedBox(width: 16),
-  ],
-),
-      body: Center(
-        child: SizedBox(
-          width: contentWidth,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Search Bar
-                Container(
-                  margin: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 4,
+                  const Row(
+                    children: [
+                      Text(
+                        'Address',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
+                      Icon(Icons.keyboard_arrow_down, color: Colors.black, size: 20),
                     ],
                   ),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      hintText: "Search for dishes...",
-                      hintStyle: TextStyle(color: Colors.grey),
-                      prefixIcon: Icon(Icons.search, color: Color(0xFF4CAF50)),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(vertical: 15),
+                  Text(
+                    _deliveryAddress,
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 11,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: CircleAvatar(
+            backgroundColor: Colors.grey[300],
+            child: const Icon(Icons.person, color: Colors.grey),
+          ),
+          onPressed: () {
+            Navigator.of(context).pushNamed('/account');
+          },
+        ),
+        const SizedBox(width: 16),
+      ],
+    ),
+    body: Stack(
+      children: [
+        Center(
+          child: SizedBox(
+            width: contentWidth,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Search Bar
+                  Container(
+                    margin: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        hintText: "Search for dishes...",
+                        hintStyle: TextStyle(color: Colors.grey),
+                        prefixIcon: Icon(Icons.search, color: Color(0xFF4CAF50)),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 15),
+                      ),
                     ),
                   ),
-                ),
 
-                // Promotional Banner
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                  // Promotional Banner
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.local_offer, color: Colors.white, size: 16),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Special Offers',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontSize: 12,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.local_offer, color: Colors.white, size: 16),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Special Offers',
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontSize: 12,
+                                    ),
                                   ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                'Get 40% OFF on\nyour first order!',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.2),
+                          ),
+                          child: const Icon(
+                            Icons.restaurant_menu,
+                            size: 40,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Offer Tags
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE8F5E9),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            const SizedBox(height: 8),
+                            child: const Center(
+                              child: Text(
+                                'MIN ₹100 OFF',
+                                style: TextStyle(
+                                  color: Color(0xFF4CAF50),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'FAST DELIVERY',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Bestseller Items Section
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Row(
+                      children: [
+                        Icon(Icons.trending_up, color: Color(0xFF4CAF50), size: 20),
+                        SizedBox(width: 8),
+                        Text(
+                          'Bestseller Items',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Bestseller Items Row
+                  Container(
+                    height: 260,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: 4,
+                      itemBuilder: (ctx, i) {
+                        final items = [
+                          {
+                            'id': 'bestseller_paneer_tikka_pizza',
+                            'name': 'Paneer Tikka Pizza',
+                            'rating': '4.6',
+                            'time': '25-30 mins',
+                            'cuisine': 'Italian',
+                            'price': 249.0,
+                            'originalPrice': 349.0,
+                            'isVeg': true,
+                            'description': 'Delicious paneer tikka pizza',
+                          },
+                          {
+                            'id': 'bestseller_cheese_burst_pizza',
+                            'name': 'Cheese Burst Pizza',
+                            'rating': '4.3',
+                            'time': '20-25 mins',
+                            'cuisine': 'Italian',
+                            'price': 299.0,
+                            'originalPrice': 399.0,
+                            'isVeg': true,
+                            'description': 'Cheesy burst pizza',
+                          },
+                          {
+                            'id': 'bestseller_veg_loaded_sandwich',
+                            'name': 'Veg Loaded Sandwich',
+                            'rating': '4.5',
+                            'time': '15-20 mins',
+                            'cuisine': 'Continental',
+                            'price': 129.0,
+                            'originalPrice': 179.0,
+                            'isVeg': true,
+                            'description': 'Loaded veg sandwich',
+                          },
+                          {
+                            'id': 'bestseller_paneer_paratha',
+                            'name': 'Paneer Paratha',
+                            'rating': '4.4',
+                            'time': '20-25 mins',
+                            'cuisine': 'North Indian',
+                            'price': 149.0,
+                            'originalPrice': 199.0,
+                            'isVeg': true,
+                            'description': 'Stuffed paneer paratha',
+                          },
+                        ];
+                        return _buildUniformCard(items[i]);
+                      },
+                    ),
+                  ),
+
+                  // Budget Meals Section
+                  Container(
+                    margin: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8F5E9),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF4CAF50),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Text(
+                                '₹99',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
                             const Text(
-                              'Get 40% OFF on\nyour first order!',
+                              'Budget Meals',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.2),
-                        ),
-                        child: const Icon(
-                          Icons.restaurant_menu,
-                          size: 40,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Offer Tags
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE8F5E9),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'MIN ₹100 OFF',
-                              style: TextStyle(
-                                color: Color(0xFF4CAF50),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'FAST DELIVERY',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Bestseller Items Section
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Row(
-                    children: [
-                      Icon(Icons.trending_up, color: Color(0xFF4CAF50), size: 20),
-                      SizedBox(width: 8),
-                      Text(
-                        'Bestseller Items',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Bestseller Items Row
-                Container(
-                  height: 260,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: 4,
-                    itemBuilder: (ctx, i) {
-                      final items = [
-                        {
-                          'id': 'bestseller_paneer_tikka_pizza',
-                          'name': 'Paneer Tikka Pizza',
-                          'rating': '4.6',
-                          'time': '25-30 mins',
-                          'cuisine': 'Italian',
-                          'price': 249.0,
-                          'originalPrice': 349.0,
-                          'isVeg': true,
-                          'description': 'Delicious paneer tikka pizza',
-                        },
-                        {
-                          'id': 'bestseller_cheese_burst_pizza',
-                          'name': 'Cheese Burst Pizza',
-                          'rating': '4.3',
-                          'time': '20-25 mins',
-                          'cuisine': 'Italian',
-                          'price': 299.0,
-                          'originalPrice': 399.0,
-                          'isVeg': true,
-                          'description': 'Cheesy burst pizza',
-                        },
-                        {
-                          'id': 'bestseller_veg_loaded_sandwich',
-                          'name': 'Veg Loaded Sandwich',
-                          'rating': '4.5',
-                          'time': '15-20 mins',
-                          'cuisine': 'Continental',
-                          'price': 129.0,
-                          'originalPrice': 179.0,
-                          'isVeg': true,
-                          'description': 'Loaded veg sandwich',
-                        },
-                        {
-                          'id': 'bestseller_paneer_paratha',
-                          'name': 'Paneer Paratha',
-                          'rating': '4.4',
-                          'time': '20-25 mins',
-                          'cuisine': 'North Indian',
-                          'price': 149.0,
-                          'originalPrice': 199.0,
-                          'isVeg': true,
-                          'description': 'Stuffed paneer paratha',
-                        },
-                      ];
-                      return _buildUniformCard(items[i]);
-                    },
-                  ),
-                ),
-
-                // Budget Meals Section
-                Container(
-                  margin: const EdgeInsets.all(16),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE8F5E9),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF4CAF50),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Text(
-                              '₹99',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'Budget Meals',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Budget Meals Row
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 20),
-                      SizedBox(width: 8),
-                      Text(
-                        'Delicious meals at ₹99 & below',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // Budget Meals Items
-                Container(
-                  height: 260,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: 4,
-                    itemBuilder: (ctx, i) {
-                      final items = [
-                        {
-                          'id': 'budget_masala_dosa',
-                          'name': 'Masala Dosa',
-                          'originalPrice': 120.0,
-                          'price': 89.0,
-                          'rating': '4.2',
-                          'reviews': '890',
-                          'restaurant': 'South Indian Kitchen',
-                          'isVeg': true,
-                          'description': 'Crispy masala dosa',
-                        },
-                        {
-                          'id': 'budget_chole_bhature',
-                          'name': 'Chole Bhature',
-                          'originalPrice': 140.0,
-                          'price': 99.0,
-                          'rating': '4.3',
-                          'reviews': '654',
-                          'restaurant': 'Punjabi Dhaba',
-                          'isVeg': true,
-                          'description': 'Authentic chole bhature',
-                        },
-                        {
-                          'id': 'budget_veg_biryani',
-                          'name': 'Veg Biryani',
-                          'originalPrice': 150.0,
-                          'price': 95.0,
-                          'rating': '4.4',
-                          'reviews': '1234',
-                          'restaurant': 'Biryani House',
-                          'isVeg': true,
-                          'description': 'Aromatic veg biryani',
-                        },
-                        {
-                          'id': 'budget_paneer_thali',
-                          'name': 'Paneer Thali',
-                          'originalPrice': 160.0,
-                          'price': 99.0,
-                          'rating': '4.5',
-                          'reviews': '876',
-                          'restaurant': 'Thali Express',
-                          'isVeg': true,
-                          'description': 'Complete paneer thali',
-                        },
-                      ];
-                      return _buildUniformCard(items[i]);
-                    },
-                  ),
-                ),
-
-                // What's on your mind?
-                const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text(
-                    "What's on your mind?",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-
-                // Category Filters
-                Container(
-                  height: 120,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      _buildCategoryIcon('Dosa', Icons.fastfood, const Color(0xFF4CAF50)),
-                      _buildCategoryIcon('North Indian', Icons.restaurant, Colors.orange),
-                      _buildCategoryIcon('Pizzas', Icons.local_pizza, Colors.red),
-                      _buildCategoryIcon('Chinese', Icons.rice_bowl, const Color(0xFF4CAF50)),
-                      _buildCategoryIcon('Thali', Icons.lunch_dining, Colors.brown),
-                    ],
-                  ),
-                ),
-
-                // Filter Row
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        _buildFilterChip('Pure Veg', null, hasIcon: true),
-                        const SizedBox(width: 8),
-                        _buildFilterChip('Fast Delivery', null, hasBolt: true),
                       ],
                     ),
                   ),
-                ),
 
-                // Cloud Kitchens Section Header
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Text(
-                    "Cloud Kitchens Near You",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  // Budget Meals Row
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 20),
+                        SizedBox(width: 8),
+                        Text(
+                          'Delicious meals at ₹99 & below',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
 
-                // Cloud Kitchens List
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    children: [
-                      _buildRestaurantCard({
-                        'name': 'Green Bowl Kitchen - Koramangala',
-                        'rating': '4.5',
-                        'reviews': '12K+',
-                        'location': 'Koramangala, 1.2 km',
-                        'cuisine': 'North Indian, South Indian, Chinese',
-                        'price': '₹300 for two',
-                        'time': '20-25 MINS',
-                        'offer': '40% OFF upto ₹80',
-                        'area': 'Koramangala',
-                      }),
-                      const SizedBox(height: 12),
-                      _buildRestaurantCard({
-                        'name': 'Veggie Delight - Indiranagar',
-                        'rating': '4.6',
-                        'reviews': '18K+',
-                        'location': 'Indiranagar, 2.1 km',
-                        'cuisine': 'Italian, Continental, Healthy',
-                        'price': '₹350 for two',
-                        'time': '25-30 MINS',
-                        'offer': 'Items at ₹99',
-                        'badge': 'Best In Italian',
-                        'area': 'Indiranagar',
-                      }),
-                      const SizedBox(height: 12),
-                      _buildRestaurantCard({
-                        'name': 'Pure Veg Express - Whitefield',
-                        'rating': '4.3',
-                        'reviews': '8K+',
-                        'location': 'Whitefield, 3.5 km',
-                        'cuisine': 'Thalis, Punjabi, Rajasthani',
-                        'price': '₹250 for two',
-                        'time': '30-35 MINS',
-                        'offer': 'Free Delivery',
-                        'area': 'Whitefield',
-                      }),
-                      const SizedBox(height: 12),
-                      _buildRestaurantCard({
-                        'name': 'Sattvic Kitchen - HSR Layout',
-                        'rating': '4.7',
-                        'reviews': '15K+',
-                        'location': 'HSR Layout, 1.8 km',
-                        'cuisine': 'South Indian, Sweets, Snacks',
-                        'price': '₹200 for two',
-                        'time': '15-20 MINS',
-                        'offer': '50% OFF upto ₹100',
-                        'badge': 'Best In South Indian',
-                        'area': 'HSR Layout',
-                      }),
-                      const SizedBox(height: 12),
-                      _buildRestaurantCard({
-                        'name': 'Flavors of India - BTM Layout',
-                        'rating': '4.4',
-                        'reviews': '10K+',
-                        'location': 'BTM Layout, 2.8 km',
-                        'cuisine': 'Biryani, Curries, Breads',
-                        'price': '₹280 for two',
-                        'time': '22-27 MINS',
-                        'offer': 'Items at ₹79',
-                        'area': 'BTM Layout',
-                      }),
-                    ],
+                  const SizedBox(height: 12),
+
+                  // Budget Meals Items
+                  Container(
+                    height: 260,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: 4,
+                      itemBuilder: (ctx, i) {
+                        final items = [
+                          {
+                            'id': 'budget_masala_dosa',
+                            'name': 'Masala Dosa',
+                            'originalPrice': 120.0,
+                            'price': 89.0,
+                            'rating': '4.2',
+                            'reviews': '890',
+                            'restaurant': 'South Indian Kitchen',
+                            'isVeg': true,
+                            'description': 'Crispy masala dosa',
+                          },
+                          {
+                            'id': 'budget_chole_bhature',
+                            'name': 'Chole Bhature',
+                            'originalPrice': 140.0,
+                            'price': 99.0,
+                            'rating': '4.3',
+                            'reviews': '654',
+                            'restaurant': 'Punjabi Dhaba',
+                            'isVeg': true,
+                            'description': 'Authentic chole bhature',
+                          },
+                          {
+                            'id': 'budget_veg_biryani',
+                            'name': 'Veg Biryani',
+                            'originalPrice': 150.0,
+                            'price': 95.0,
+                            'rating': '4.4',
+                            'reviews': '1234',
+                            'restaurant': 'Biryani House',
+                            'isVeg': true,
+                            'description': 'Aromatic veg biryani',
+                          },
+                          {
+                            'id': 'budget_paneer_thali',
+                            'name': 'Paneer Thali',
+                            'originalPrice': 160.0,
+                            'price': 99.0,
+                            'rating': '4.5',
+                            'reviews': '876',
+                            'restaurant': 'Thali Express',
+                            'isVeg': true,
+                            'description': 'Complete paneer thali',
+                          },
+                        ];
+                        return _buildUniformCard(items[i]);
+                      },
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 32),
-              ],
+                  // What's on your mind?
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      "What's on your mind?",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  // Category Filters
+                  Container(
+                    height: 120,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        _buildCategoryIcon('Dosa', Icons.fastfood, const Color(0xFF4CAF50)),
+                        _buildCategoryIcon('North Indian', Icons.restaurant, Colors.orange),
+                        _buildCategoryIcon('Pizzas', Icons.local_pizza, Colors.red),
+                        _buildCategoryIcon('Chinese', Icons.rice_bowl, const Color(0xFF4CAF50)),
+                        _buildCategoryIcon('Thali', Icons.lunch_dining, Colors.brown),
+                      ],
+                    ),
+                  ),
+
+                  // Filter Row
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildFilterChip('Pure Veg', null, hasIcon: true),
+                          const SizedBox(width: 8),
+                          _buildFilterChip('Fast Delivery', null, hasBolt: true),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Cloud Kitchens Section Header
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Text(
+                      "Cloud Kitchens Near You",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  // Cloud Kitchens List
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      children: [
+                        _buildRestaurantCard({
+                          'name': 'Green Bowl Kitchen - Koramangala',
+                          'rating': '4.5',
+                          'reviews': '12K+',
+                          'location': 'Koramangala, 1.2 km',
+                          'cuisine': 'North Indian, South Indian, Chinese',
+                          'price': '₹300 for two',
+                          'time': '20-25 MINS',
+                          'offer': '40% OFF upto ₹80',
+                          'area': 'Koramangala',
+                        }),
+                        const SizedBox(height: 12),
+                        _buildRestaurantCard({
+                          'name': 'Veggie Delight - Indiranagar',
+                          'rating': '4.6',
+                          'reviews': '18K+',
+                          'location': 'Indiranagar, 2.1 km',
+                          'cuisine': 'Italian, Continental, Healthy',
+                          'price': '₹350 for two',
+                          'time': '25-30 MINS',
+                          'offer': 'Items at ₹99',
+                          'badge': 'Best In Italian',
+                          'area': 'Indiranagar',
+                        }),
+                        const SizedBox(height: 12),
+                        _buildRestaurantCard({
+                          'name': 'Pure Veg Express - Whitefield',
+                          'rating': '4.3',
+                          'reviews': '8K+',
+                          'location': 'Whitefield, 3.5 km',
+                          'cuisine': 'Thalis, Punjabi, Rajasthani',
+                          'price': '₹250 for two',
+                          'time': '30-35 MINS',
+                          'offer': 'Free Delivery',
+                          'area': 'Whitefield',
+                        }),
+                        const SizedBox(height: 12),
+                        _buildRestaurantCard({
+                          'name': 'Sattvic Kitchen - HSR Layout',
+                          'rating': '4.7',
+                          'reviews': '15K+',
+                          'location': 'HSR Layout, 1.8 km',
+                          'cuisine': 'South Indian, Sweets, Snacks',
+                          'price': '₹200 for two',
+                          'time': '15-20 MINS',
+                          'offer': '50% OFF upto ₹100',
+                          'badge': 'Best In South Indian',
+                          'area': 'HSR Layout',
+                        }),
+                        const SizedBox(height: 12),
+                        _buildRestaurantCard({
+                          'name': 'Flavors of India - BTM Layout',
+                          'rating': '4.4',
+                          'reviews': '10K+',
+                          'location': 'BTM Layout, 2.8 km',
+                          'cuisine': 'Biryani, Curries, Breads',
+                          'price': '₹280 for two',
+                          'time': '22-27 MINS',
+                          'offer': 'Items at ₹79',
+                          'area': 'BTM Layout',
+                        }),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 120), // Extra padding for bottom cart slider
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      floatingActionButton: null,
-    );
-  }
+        
+        // Bottom Cart Slider
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: BottomCartSlider(cartType: 'food'),
+        ),
+      ],
+    ),
+    floatingActionButton: null,
+  );
+}
 
   // New unified card widget for both bestseller and budget meals
   Widget _buildUniformCard(Map<String, dynamic> item) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../models/food_item.dart';
+import '../widgets/bottom_cart_slider.dart';
 
 class RestaurantDetailFinalScreen extends StatefulWidget {
   static const routeName = '/restaurant-detail-final';
@@ -199,343 +200,351 @@ class _RestaurantDetailFinalScreenState extends State<RestaurantDetailFinalScree
     Provider.of<FoodCartProvider>(context, listen: false).removeSingle(itemId);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final restaurantName = args['name'] ?? 'Green Bowl Kitchen';
-    final cuisine = args['cuisine'] ?? 'North Indian';
-    final area = args['area'] ?? 'Koramangala';
-    
-    // Set menu items based on area
-    if (_currentArea != area) {
-      _currentArea = area;
-      _menuItems = _locationMenus[area] ?? _locationMenus['Koramangala']!;
-    }
-    // bottom cart bar removed; no local cart summary needed here
-    
-    final isWeb = MediaQuery.of(context).size.width > 600;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final contentWidth = isWeb ? screenWidth * 0.75 : screenWidth;
+@override
+Widget build(BuildContext context) {
+  final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+  final restaurantName = args['name'] ?? 'Green Bowl Kitchen';
+  final cuisine = args['cuisine'] ?? 'North Indian';
+  final area = args['area'] ?? 'Koramangala';
+  
+  // Set menu items based on area
+  if (_currentArea != area) {
+    _currentArea = area;
+    _menuItems = _locationMenus[area] ?? _locationMenus['Koramangala']!;
+  }
+  // bottom cart bar removed; no local cart summary needed here
+  
+  final isWeb = MediaQuery.of(context).size.width > 600;
+  final screenWidth = MediaQuery.of(context).size.width;
+  final contentWidth = isWeb ? screenWidth * 0.75 : screenWidth;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          Center(
-            child: SizedBox(
-              width: contentWidth,
-              child: CustomScrollView(
-                slivers: [
-                  // App Bar with back button and actions
-                  SliverAppBar(
-                    backgroundColor: Colors.white,
-                    elevation: 0,
-                    pinned: true,
-                    leading: IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    actions: [],
+  return Scaffold(
+    backgroundColor: Colors.white,
+    body: Stack(
+      children: [
+        Center(
+          child: SizedBox(
+            width: contentWidth,
+            child: CustomScrollView(
+              slivers: [
+                // App Bar with back button and actions
+                SliverAppBar(
+                  backgroundColor: Colors.white,
+                  elevation: 0,
+                  pinned: true,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
-                  
-                  // Restaurant Header
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Location Badge
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE8F5E9),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.location_on, size: 16, color: Color(0xFF4CAF50)),
-                                const SizedBox(width: 4),
-                                Text(
-                                  area,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                    color: Color(0xFF4CAF50),
-                                  ),
-                                ),
-                              ],
-                            ),
+                  actions: [],
+                ),
+                
+                // Restaurant Header
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Location Badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE8F5E9),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          const SizedBox(height: 12),
-                          
-                          // Restaurant Name
-                          Text(
-                            restaurantName,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          
-                          // Cuisine with Veg Icon
-                          Row(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Container(
-                                width: 18,
-                                height: 18,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: const Color(0xFF4CAF50), width: 2),
-                                  borderRadius: BorderRadius.circular(3),
-                                ),
-                                child: Center(
-                                  child: Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF4CAF50),
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
+                              const Icon(Icons.location_on, size: 16, color: Color(0xFF4CAF50)),
+                              const SizedBox(width: 4),
                               Text(
-                                cuisine,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[700],
-                                  fontWeight: FontWeight.w500,
+                                area,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: Color(0xFF4CAF50),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 16),
-                          
-                          // Rating and Delivery Info
-                          Row(
+                        ),
+                        const SizedBox(height: 12),
+                        
+                        // Restaurant Name
+                        Text(
+                          restaurantName,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        
+                        // Cuisine with Veg Icon
+                        Row(
+                          children: [
+                            Container(
+                              width: 18,
+                              height: 18,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: const Color(0xFF4CAF50), width: 2),
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                              child: Center(
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF4CAF50),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              cuisine,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        // Rating and Delivery Info
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF4CAF50),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Row(
+                                children: [
+                                  Icon(Icons.star, size: 14, color: Colors.white),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    '4.5',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              '20-25 mins',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '•',
+                              style: TextStyle(color: Colors.grey[400]),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '₹300 for two',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        // Offer Badge
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFF4CAF50).withOpacity(0.1),
+                                const Color(0xFF66BB6A).withOpacity(0.1),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFF4CAF50).withOpacity(0.3)),
+                          ),
+                          child: Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF4CAF50),
-                                  borderRadius: BorderRadius.circular(6),
+                                padding: const EdgeInsets.all(8),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF4CAF50),
+                                  shape: BoxShape.circle,
                                 ),
-                                child: const Row(
+                                child: const Icon(
+                                  Icons.local_offer,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(Icons.star, size: 14, color: Colors.white),
-                                    SizedBox(width: 4),
                                     Text(
-                                      '4.5',
+                                      'Special Offer',
                                       style: TextStyle(
-                                        color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 14,
+                                        fontSize: 16,
+                                        color: Color(0xFF4CAF50),
+                                      ),
+                                    ),
+                                    Text(
+                                      '40% OFF on orders above ₹199',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              Text(
-                                '20-25 mins',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[700],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '•',
-                                style: TextStyle(color: Colors.grey[400]),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '₹300 for two',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[700],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
                             ],
                           ),
-                          const SizedBox(height: 16),
-                          
-                          // Offer Badge
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  const Color(0xFF4CAF50).withOpacity(0.1),
-                                  const Color(0xFF66BB6A).withOpacity(0.1),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFF4CAF50).withOpacity(0.3)),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF4CAF50),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.local_offer,
-                                    size: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                const Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Special Offer',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          color: Color(0xFF4CAF50),
-                                        ),
-                                      ),
-                                      Text(
-                                        '40% OFF on orders above ₹199',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                // Search Bar
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: const InputDecoration(
+                          hintText: 'Search for dishes',
+                          prefixIcon: Icon(Icons.search, color: Color(0xFF4CAF50)),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(vertical: 15),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                
+                // Filter Chips
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildFilterChip('Pure Veg', Icons.eco, true),
+                          const SizedBox(width: 8),
+                          _buildFilterChip('Ratings 4.0+', null, false),
+                          const SizedBox(width: 8),
+                          _buildFilterChip('Bestseller', Icons.star, false),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                
+                // Free Delivery Badge
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE8F5E9),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.delivery_dining, color: Color(0xFF4CAF50), size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'Free delivery on orders above ₹99',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF4CAF50),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  
-                  // Search Bar
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: TextField(
-                          controller: _searchController,
-                          decoration: const InputDecoration(
-                            hintText: 'Search for dishes',
-                            prefixIcon: Icon(Icons.search, color: Color(0xFF4CAF50)),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(vertical: 15),
-                          ),
-                        ),
+                ),
+                
+                // Menu Section Header
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      'Menu (${_menuItems.length} items)',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  
-                  // Filter Chips
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            _buildFilterChip('Pure Veg', Icons.eco, true),
-                            const SizedBox(width: 8),
-                            _buildFilterChip('Ratings 4.0+', null, false),
-                            const SizedBox(width: 8),
-                            _buildFilterChip('Bestseller', Icons.star, false),
-                          ],
-                        ),
-                      ),
+                ),
+                
+                // Menu Items Grid
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  sliver: SliverGrid(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: isWeb ? 3 : 2,
+                      childAspectRatio: 0.70,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return _buildMenuItem(_menuItems[index]);
+                      },
+                      childCount: _menuItems.length,
                     ),
                   ),
-                  
-                  // Free Delivery Badge
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE8F5E9),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.delivery_dining, color: Color(0xFF4CAF50), size: 20),
-                            SizedBox(width: 8),
-                            Text(
-                              'Free delivery on orders above ₹99',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF4CAF50),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  
-                  // Menu Section Header
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        'Menu (${_menuItems.length} items)',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  
-                  // Menu Items Grid
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    sliver: SliverGrid(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: isWeb ? 3 : 2,
-                        childAspectRatio: 0.70,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                      ),
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          return _buildMenuItem(_menuItems[index]);
-                        },
-                        childCount: _menuItems.length,
-                      ),
-                    ),
-                  ),
-                  
-                  const SliverToBoxAdapter(child: SizedBox(height: 100)),
-                ],
-              ),
+                ),
+                
+                const SliverToBoxAdapter(child: SizedBox(height: 120)), // Extra padding for bottom cart slider
+              ],
             ),
           ),
-        ],
-      ),
-      // Cart Bottom Bar removed per request
-      bottomNavigationBar: null,
-    );
-  }
+        ),
+        
+        // Bottom Cart Slider
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: BottomCartSlider(cartType: 'food'),
+        ),
+      ],
+    ),
+    // Cart Bottom Bar removed per request
+    bottomNavigationBar: null,
+  );
+}
 
   Widget _buildFilterChip(String label, IconData? icon, bool selected) {
     return Container(

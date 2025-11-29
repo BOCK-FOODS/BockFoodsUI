@@ -119,60 +119,61 @@ class _InstamartScreenState extends State<InstamartScreen> {
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          toolbarHeight: 70,
-          title: GestureDetector(
-            onTap: _showAddressDialog,
-            child: Row(
-              children: [
-                const Icon(Icons.home, color: Color(0xFF27A600), size: 24),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Row(
-                        children: [
-                          Text(
-                            'Address',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Icon(Icons.keyboard_arrow_down, color: Colors.black, size: 20),
-                        ],
-                      ),
-                      Text(
-                        _deliveryAddress.isEmpty ? '' : _deliveryAddress,
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 11,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ],
+  automaticallyImplyLeading: false, // Add this line to remove back arrow
+  backgroundColor: Colors.white,
+  elevation: 0,
+  toolbarHeight: 70,
+  title: GestureDetector(
+    onTap: _showAddressDialog,
+    child: Row(
+      children: [
+        const Icon(Icons.home, color: Color(0xFF27A600), size: 24),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Text(
+                    'Address',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const CircleAvatar(
-                backgroundColor: Colors.grey,
-                radius: 16,
-                child: Icon(Icons.person, size: 20, color: Colors.white),
+                  Icon(Icons.keyboard_arrow_down, color: Colors.black, size: 20),
+                ],
               ),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/account');
-              },
-            ),
-          ],
+              Text(
+                _deliveryAddress.isEmpty ? '' : _deliveryAddress,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 11,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ],
+          ),
         ),
+      ],
+    ),
+  ),
+  actions: [
+    IconButton(
+      icon: const CircleAvatar(
+        backgroundColor: Colors.grey,
+        radius: 16,
+        child: Icon(Icons.person, size: 20, color: Colors.white),
+      ),
+      onPressed: () {
+        Navigator.of(context).pushNamed('/account');
+      },
+    ),
+  ],
+),
         body: ListView(
           children: [
             // Search Bar

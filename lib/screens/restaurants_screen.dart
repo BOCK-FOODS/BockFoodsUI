@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
+import '../models/food_item.dart';
 import 'restaurant_detail_final.dart';
-
 
 class RestaurantsScreen extends StatefulWidget {
   static const routeName = '/restaurants';
@@ -13,7 +15,6 @@ class RestaurantsScreen extends StatefulWidget {
 class _RestaurantsScreenState extends State<RestaurantsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _deliveryAddress = '';
-
 
   @override
   void dispose() {
@@ -58,7 +59,30 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
       ),
     );
   }
- 
+
+  // Helper functions for cart management
+  int getItemCount(String itemId) {
+    final cart = Provider.of<FoodCartProvider>(context, listen: false);
+    return cart.items[itemId]?.qty ?? 0;
+  }
+
+  void addToCart(String itemId, String itemName, double price, String description) {
+    final foodItem = FoodItem(
+      id: itemId,
+      name: itemName,
+      price: price,
+      description: description,
+      imageUrl: '',
+      category: 'Featured',
+      isVeg: true,
+    );
+    
+    Provider.of<FoodCartProvider>(context, listen: false).addItem(foodItem);
+  }
+
+  void removeFromCart(String itemId) {
+    Provider.of<FoodCartProvider>(context, listen: false).removeSingle(itemId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,59 +93,60 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: GestureDetector(
-          onTap: _showAddressDialog,
-          child: Row(
+  automaticallyImplyLeading: false, // Add this line to remove back arrow
+  backgroundColor: Colors.white,
+  elevation: 0,
+  title: GestureDetector(
+    onTap: _showAddressDialog,
+    child: Row(
+      children: [
+        const Icon(Icons.home, color: Color(0xFF4CAF50), size: 24),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.home, color: Color(0xFF4CAF50), size: 24),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(
-                      children: [
-                        Text(
-                          'Address',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Icon(Icons.keyboard_arrow_down, color: Colors.black, size: 20),
-                      ],
+              const Row(
+                children: [
+                  Text(
+                    'Address',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
-                    Text(
-                      _deliveryAddress,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 11,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                  ],
+                  ),
+                  Icon(Icons.keyboard_arrow_down, color: Colors.black, size: 20),
+                ],
+              ),
+              Text(
+                _deliveryAddress,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 11,
                 ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ],
           ),
         ),
-        actions: [
-          IconButton(
-            icon: CircleAvatar(
-              backgroundColor: Colors.grey[300],
-              child: const Icon(Icons.person, color: Colors.grey),
-            ),
-            onPressed: () {
-              Navigator.of(context).pushNamed('/account');
-            },
-          ),
-          const SizedBox(width: 16),
-        ],
+      ],
+    ),
+  ),
+  actions: [
+    IconButton(
+      icon: CircleAvatar(
+        backgroundColor: Colors.grey[300],
+        child: const Icon(Icons.person, color: Colors.grey),
       ),
+      onPressed: () {
+        Navigator.of(context).pushNamed('/account');
+      },
+    ),
+    const SizedBox(width: 16),
+  ],
+),
       body: Center(
         child: SizedBox(
           width: contentWidth,
@@ -282,7 +307,7 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
 
                 // Bestseller Items Row
                 Container(
-                  height: 280,
+                  height: 260,
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
@@ -291,43 +316,51 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                     itemBuilder: (ctx, i) {
                       final items = [
                         {
+                          'id': 'bestseller_paneer_tikka_pizza',
                           'name': 'Paneer Tikka Pizza',
                           'rating': '4.6',
                           'time': '25-30 mins',
                           'cuisine': 'Italian',
-                          'price': '₹249',
-                          'originalPrice': '₹349',
+                          'price': 249.0,
+                          'originalPrice': 349.0,
                           'isVeg': true,
+                          'description': 'Delicious paneer tikka pizza',
                         },
                         {
+                          'id': 'bestseller_cheese_burst_pizza',
                           'name': 'Cheese Burst Pizza',
                           'rating': '4.3',
                           'time': '20-25 mins',
                           'cuisine': 'Italian',
-                          'price': '₹299',
-                          'originalPrice': '₹399',
+                          'price': 299.0,
+                          'originalPrice': 399.0,
                           'isVeg': true,
+                          'description': 'Cheesy burst pizza',
                         },
                         {
+                          'id': 'bestseller_veg_loaded_sandwich',
                           'name': 'Veg Loaded Sandwich',
                           'rating': '4.5',
                           'time': '15-20 mins',
                           'cuisine': 'Continental',
-                          'price': '₹129',
-                          'originalPrice': '₹179',
+                          'price': 129.0,
+                          'originalPrice': 179.0,
                           'isVeg': true,
+                          'description': 'Loaded veg sandwich',
                         },
                         {
+                          'id': 'bestseller_paneer_paratha',
                           'name': 'Paneer Paratha',
                           'rating': '4.4',
                           'time': '20-25 mins',
                           'cuisine': 'North Indian',
-                          'price': '₹149',
-                          'originalPrice': '₹199',
+                          'price': 149.0,
+                          'originalPrice': 199.0,
                           'isVeg': true,
+                          'description': 'Stuffed paneer paratha',
                         },
                       ];
-                      return _buildBestsellerCard(items[i]);
+                      return _buildUniformCard(items[i]);
                     },
                   ),
                 ),
@@ -397,7 +430,7 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
 
                 // Budget Meals Items
                 Container(
-                  height: 220,
+                  height: 260,
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
@@ -405,12 +438,52 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                     itemCount: 4,
                     itemBuilder: (ctx, i) {
                       final items = [
-                        {'name': 'Masala Dosa', 'originalPrice': '₹120', 'price': '₹89', 'rating': '4.2', 'reviews': '890', 'restaurant': 'South Indian Kitchen', 'isVeg': true},
-                        {'name': 'Chole Bhature', 'originalPrice': '₹140', 'price': '₹99', 'rating': '4.3', 'reviews': '654', 'restaurant': 'Punjabi Dhaba', 'isVeg': true},
-                        {'name': 'Veg Biryani', 'originalPrice': '₹150', 'price': '₹95', 'rating': '4.4', 'reviews': '1234', 'restaurant': 'Biryani House', 'isVeg': true},
-                        {'name': 'Paneer Thali', 'originalPrice': '₹160', 'price': '₹99', 'rating': '4.5', 'reviews': '876', 'restaurant': 'Thali Express', 'isVeg': true},
+                        {
+                          'id': 'budget_masala_dosa',
+                          'name': 'Masala Dosa',
+                          'originalPrice': 120.0,
+                          'price': 89.0,
+                          'rating': '4.2',
+                          'reviews': '890',
+                          'restaurant': 'South Indian Kitchen',
+                          'isVeg': true,
+                          'description': 'Crispy masala dosa',
+                        },
+                        {
+                          'id': 'budget_chole_bhature',
+                          'name': 'Chole Bhature',
+                          'originalPrice': 140.0,
+                          'price': 99.0,
+                          'rating': '4.3',
+                          'reviews': '654',
+                          'restaurant': 'Punjabi Dhaba',
+                          'isVeg': true,
+                          'description': 'Authentic chole bhature',
+                        },
+                        {
+                          'id': 'budget_veg_biryani',
+                          'name': 'Veg Biryani',
+                          'originalPrice': 150.0,
+                          'price': 95.0,
+                          'rating': '4.4',
+                          'reviews': '1234',
+                          'restaurant': 'Biryani House',
+                          'isVeg': true,
+                          'description': 'Aromatic veg biryani',
+                        },
+                        {
+                          'id': 'budget_paneer_thali',
+                          'name': 'Paneer Thali',
+                          'originalPrice': 160.0,
+                          'price': 99.0,
+                          'rating': '4.5',
+                          'reviews': '876',
+                          'restaurant': 'Thali Express',
+                          'isVeg': true,
+                          'description': 'Complete paneer thali',
+                        },
                       ];
-                      return _buildBudgetMealCard(items[i]);
+                      return _buildUniformCard(items[i]);
                     },
                   ),
                 ),
@@ -471,7 +544,7 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                   ),
                 ),
 
-                // Cloud Kitchens List - 5 Bangalore Locations
+                // Cloud Kitchens List
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
@@ -547,12 +620,229 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
           ),
         ),
       ),
-      // Floating cart action removed on Restaurants screen per UX: cart interaction is via CartScreen
       floatingActionButton: null,
     );
   }
 
-  // _showCartDialog removed — Restaurants screen doesn't manage cart directly
+  // New unified card widget for both bestseller and budget meals
+  Widget _buildUniformCard(Map<String, dynamic> item) {
+    final itemId = item['id'] as String;
+    
+    return Consumer<FoodCartProvider>(
+      builder: (context, cart, child) {
+        final itemCount = cart.items[itemId]?.qty ?? 0;
+        
+        return Container(
+          width: 160,
+          margin: const EdgeInsets.only(right: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 4,
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image section
+              Stack(
+                children: [
+                  Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    ),
+                    child: const Center(
+                      child: Icon(Icons.restaurant, size: 60, color: Colors.grey),
+                    ),
+                  ),
+                  // Veg indicator
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Container(
+                      width: 18,
+                      height: 18,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFF4CAF50), width: 2),
+                        borderRadius: BorderRadius.circular(3),
+                        color: Colors.white,
+                      ),
+                      child: Center(
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF4CAF50),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // Details section
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Item info
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item['name'],
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              if (item['originalPrice'] != null) ...[
+                                Text(
+                                  '₹${(item['originalPrice'] as num).toInt()}',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[500],
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                              ],
+                              Text(
+                                '₹${(item['price'] as num).toInt()}',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF4CAF50),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(Icons.star, size: 12, color: Color(0xFF4CAF50)),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  item['reviews'] != null 
+                                      ? '${item['rating']} (${item['reviews']})'
+                                      : '${item['rating']} • ${item['time'] ?? ''}',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[700],
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      // Add button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 32,
+                        child: itemCount == 0
+                            ? Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () {
+                                    addToCart(
+                                      itemId,
+                                      item['name'] as String,
+                                      (item['price'] as num).toDouble(),
+                                      item['description'] as String? ?? '',
+                                    );
+                                  },
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(color: const Color(0xFF4CAF50), width: 1.5),
+                                    ),
+                                    child: const Center(
+                                      child: Text(
+                                        'ADD',
+                                        style: TextStyle(
+                                          color: Color(0xFF4CAF50),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF4CAF50),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    InkWell(
+                                      onTap: () => removeFromCart(itemId),
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(4),
+                                        child: Icon(Icons.remove, color: Colors.white, size: 16),
+                                      ),
+                                    ),
+                                    Text(
+                                      '$itemCount',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        addToCart(
+                                          itemId,
+                                          item['name'] as String,
+                                          (item['price'] as num).toDouble(),
+                                          item['description'] as String? ?? '',
+                                        );
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(4),
+                                        child: Icon(Icons.add, color: Colors.white, size: 16),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   Widget _buildCategoryIcon(String label, IconData icon, Color color) {
     return Container(
@@ -631,241 +921,6 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
             const SizedBox(width: 4),
             Icon(icon, size: 16),
           ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBestsellerCard(Map<String, dynamic> item) {
-    return Container(
-      width: 160,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 4,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              Container(
-                height: 140,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                ),
-                child: const Center(
-                  child: Icon(Icons.restaurant, size: 60, color: Colors.grey),
-                ),
-              ),
-              Positioned(
-                top: 8,
-                left: 8,
-                child: Container(
-                  width: 18,
-                  height: 18,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFF4CAF50), width: 2),
-                    borderRadius: BorderRadius.circular(3),
-                    color: Colors.white,
-                  ),
-                  child: Center(
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF4CAF50),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // add button removed from bestseller cards per request
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item['name'],
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Text(
-                      item['originalPrice'],
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey[500],
-                        decoration: TextDecoration.lineThrough,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      item['price'],
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF4CAF50),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.star, size: 12, color: Color(0xFF4CAF50)),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${item['rating']} • ${item['time']}',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBudgetMealCard(Map<String, dynamic> item) {
-    return Container(
-      width: 140,
-      margin: const EdgeInsets.only(right: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              Container(
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                ),
-                child: const Center(
-                  child: Icon(Icons.restaurant, size: 50, color: Colors.grey),
-                ),
-              ),
-              // add button removed from budget meal cards per request
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    if (item['isVeg'])
-                      Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xFF4CAF50), width: 1.5),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                        child: Center(
-                          child: Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF4CAF50),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                      ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        item['name'],
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Text(
-                      item['originalPrice'],
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey[500],
-                        decoration: TextDecoration.lineThrough,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      item['price'],
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF4CAF50),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.star, size: 12, color: Color(0xFF4CAF50)),
-                    const SizedBox(width: 2),
-                    Text(
-                      '${item['rating']} (${item['reviews']})',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  item['restaurant'],
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey[600],
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -954,7 +1009,6 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                     ),
                   ),
                 ),
-                // favorite heart removed from restaurant card per request
                 Positioned(
                   top: 12,
                   left: 12,

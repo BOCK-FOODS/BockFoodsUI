@@ -224,12 +224,12 @@ class _CartReviewSheet extends StatelessWidget {
       child: Row(
         children: [
           const Text(
-            'Delivery in',
+            'Fast Delivery',
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           const SizedBox(width: 8),
           const Text(
-            '12 Mins',
+            '',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

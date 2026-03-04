@@ -1,66 +1,43 @@
 import 'package:flutter/material.dart';
-import '../models/food_item.dart';
 import 'package:provider/provider.dart';
-import 'package:bock_foods/providers/cart_provider.dart';
+import '../models/restaurant.dart'; // Ensure this exists or use your own model
+// Import the provider
+import '../providers/food_cart_provider.dart';
 
 class FoodCard extends StatelessWidget {
-  final FoodItem item;
-  const FoodCard({super.key, required this.item});
+  // Assuming you are passing a 'Restaurant' or 'MenuItem' object here
+  // Adjust the type 'dynamic' to 'MenuItem' if you have that model
+  final dynamic item; 
+
+  const FoodCard({Key? key, required this.item}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical:8, horizontal: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          children: [
-            // Placeholder for image
-            Container(
-              width: 80,
-              height: 70,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(child: Text(item.name.split(' ').first)),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(item.isVeg ? Icons.circle : Icons.circle_outlined, size:12, color: item.isVeg ? Colors.green : Colors.red),
-                      const SizedBox(width:6),
-                      Expanded(child: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold))),
-                      Text('₹${item.price.toStringAsFixed(0)}')
-                    ],
-                  ),
-                  const SizedBox(height:6),
-                  Text(item.description, maxLines:2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.black54)),
-                  const SizedBox(height:8),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF27A600),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                      ),
-                      onPressed: (){
-                        Provider.of<FoodCartProvider>(context, listen: false).addItem(item);
-                        // No snackbar per UX — unified cart reflects the change
-                      },
-                      child: const Text('ADD'),
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
+      margin: const EdgeInsets.all(10),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(10),
+        leading: (item.imageUrl != null && item.imageUrl.isNotEmpty)
+            ? Image.network(item.imageUrl, width: 60, height: 60, fit: BoxFit.cover)
+            : Container(width: 60, height: 60, color: Colors.grey),
+        title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text("₹${item.price}"),
+        trailing: ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+          onPressed: () {
+            // FIX: Use Provider instead of ApiService
+            Provider.of<FoodCartProvider>(context, listen: false).addItem(
+              item.id.toString(),
+              double.parse(item.price.toString()),
+              item.name,
+              item.imageUrl ?? "",
+            );
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("${item.name} added to Food Cart!")),
+            );
+          },
+          child: const Text("ADD", style: TextStyle(color: Colors.white)),
         ),
       ),
     );

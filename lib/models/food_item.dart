@@ -1,19 +1,29 @@
+// lib/models/food_item.dart
 class FoodItem {
   final String id;
   final String name;
   final String description;
   final double price;
-  final String category;
-  final String imageUrl;
-  final bool isVeg;
+  final String? imageUrl;
+  final bool isAvailable;
 
   FoodItem({
     required this.id,
     required this.name,
     required this.description,
     required this.price,
-    required this.category,
-    required this.imageUrl,
-    required this.isVeg,
+    this.imageUrl,
+    required this.isAvailable,
   });
+
+  factory FoodItem.fromJson(Map<String, dynamic> json) {
+    return FoodItem(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      price: (json['price'] as num).toDouble(),
+      imageUrl: json['imageUrl'],
+      isAvailable: json['isAvailable'],
+    );
+  }
 }

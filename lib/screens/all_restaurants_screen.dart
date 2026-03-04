@@ -212,7 +212,7 @@ class _AllRestaurantsScreenState extends State<AllRestaurantsScreen> {
                   const SizedBox(height: 12),
                   ..._restaurants.map((r) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: _buildRestaurantCard(r),
+                   // child: _buildRestaurantCard(r),
                   )),
                 ],
                 
@@ -225,7 +225,7 @@ class _AllRestaurantsScreenState extends State<AllRestaurantsScreen> {
                   const SizedBox(height: 12),
                   ..._bestInSafety.map((r) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: _buildRestaurantCard(r),
+                   // child: _buildRestaurantCard(r),
                   )),
                 ],
                 
@@ -251,7 +251,7 @@ class _AllRestaurantsScreenState extends State<AllRestaurantsScreen> {
                   
                   ..._pepsiPartners.map((r) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: _buildRestaurantCard(r),
+                  //  child: _buildRestaurantCard(r),
                   )),
                 ],
               ],
@@ -500,7 +500,7 @@ class _AllRestaurantsScreenState extends State<AllRestaurantsScreen> {
     );
   }
 
-  Widget _buildRestaurantCard(Map<String, dynamic> restaurant) {
+ /* Widget _buildRestaurantCard(Map<String, dynamic> restaurant) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
@@ -601,7 +601,7 @@ class _AllRestaurantsScreenState extends State<AllRestaurantsScreen> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget _buildSafetyBanner() {
     return Container(

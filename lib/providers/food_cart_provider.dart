@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import '../models/cart_item.dart'; // Correct Import Path
+import '../models/cart_item.dart'; // Import the shared model
 
-class InstamartCartProvider with ChangeNotifier {
+class FoodCartProvider with ChangeNotifier {
   final Map<String, CartItem> _items = {};
 
   Map<String, CartItem> get items => {..._items};
@@ -65,7 +65,7 @@ class InstamartCartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Added to fix the ApiService error
+  // Helper to fix ApiService error
   void setCartItems(List<dynamic> items) {
     _items.clear();
     notifyListeners();

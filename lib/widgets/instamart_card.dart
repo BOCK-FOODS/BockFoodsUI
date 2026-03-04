@@ -1,46 +1,82 @@
 import 'package:flutter/material.dart';
-import '../models/food_item.dart';
-import 'package:bock_foods/providers/instamart_cart_provider.dart';
 import 'package:provider/provider.dart';
+// Import your specific provider
+import '../providers/instamart_cart_provider.dart';
+import '../models/grocery_item.dart'; // Assuming you have this model
 
 class InstamartCard extends StatelessWidget {
-  final FoodItem item;
-  const InstamartCard({super.key, required this.item});
+  final GroceryItem item;
+
+  const InstamartCard({Key? key, required this.item}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical:8, horizontal: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
+    return Container(
+      width: 160,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 70,
-              height: 60,
-              decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(8)),
-              child: Center(child: Text(item.name.split(' ').first)),
-            ),
-            const SizedBox(width: 12),
+            // Image Section
             Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  image: DecorationImage(
+                    image: NetworkImage(item.imageUrl ?? 'https://via.placeholder.com/150'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            // Details Section
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height:6),
-                  Text('₹${item.price.toStringAsFixed(0)}', style: const TextStyle(color: Colors.black54)),
+                  Text(
+                    item.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("₹${item.price}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                      InkWell(
+                        onTap: () {
+                          // FIX: Use Provider here
+                          Provider.of<InstamartCartProvider>(context, listen: false).addItem(
+                            item.id,
+                            item.price.toDouble(),
+                            item.name,
+                            item.imageUrl ?? "",
+                          );
+                          
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Added to Instamart Cart"), duration: Duration(milliseconds: 500)),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.green),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text("ADD", style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
+                        ),
+                      )
+                    ],
+                  ),
                 ],
               ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF27A600)),
-              onPressed: (){
-                Provider.of<InstamartCartProvider>(context, listen: false).addItem(item);
-                // No snackbar per UX — Cart screen shows unified cart
-              },
-              child: const Text('ADD'),
-            )
           ],
         ),
       ),
